@@ -10,6 +10,19 @@ export async function POST(req: Request) {
     await initDb();
     const { email, password, subdomain } = await req.json();
     
+    // ── Superadmin bypass (platform-level user, not tied to any company subdomain) ──
+    const superAdminCheck = await db.query(
+      `SELECT * FROM users WHERE email = $1 AND role = 'superadmin'`,
+      [email]
+    );
+    if (superAdminCheck.rows.length > 0) {
+      const saUser = superAdminCheck.rows[0] as any;
+      const valid = await bcrypt.compare(password, saUser.password || '');
+      if (!valid) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      const token = jwt.sign({ id: saUser.id, company_id: saUser.company_id, role: saUser.role }, JWT_SECRET, { expiresIn: '24h' });
+      return NextResponse.json({ user: saUser, company: { id: 'platform', name: 'Platform Admin', subdomain: 'platform', status: 'active', onboarding_step: 'done' }, token });
+    }
+
     let user = null;
     let comp = null;
     
@@ -23,7 +36,7 @@ export async function POST(req: Request) {
       );
       if (r.rows.length > 0) {
         user = r.rows[0];
-        const cr = await db.query('SELECT * FROM companies WHERE id = $1', [user.company_id]);
+        const cr = await db.query('SELECT * FROM companies WHERE id = $1', [(user as any).company_id]);
         comp = cr.rows[0];
       }
     } else {
@@ -31,7 +44,7 @@ export async function POST(req: Request) {
       const r = await db.query('SELECT * FROM users WHERE email = $1', [email]);
       if (r.rows.length > 0) {
         user = r.rows[0];
-        const cr = await db.query('SELECT * FROM companies WHERE id = $1', [user.company_id]);
+        const cr = await db.query('SELECT * FROM companies WHERE id = $1', [(user as any).company_id]);
         comp = cr.rows[0];
       }
     }
