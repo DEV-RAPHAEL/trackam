@@ -3,7 +3,7 @@ import "./globals.css";
 import { ToastContainer } from "@/components/ToastContainer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://trackam.ng"),
+  metadataBase: new URL("https://trackam.com.ng"),
   title: {
     default: "Trackam — Nigeria's #1 Business CRM Platform",
     template: "%s | Trackam CRM",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_NG",
-    url: "https://trackam.ng",
+    url: "https://trackam.com.ng",
     siteName: "Trackam CRM",
     title: "Trackam — Nigeria's #1 Business CRM Platform",
     description:
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: "https://trackam.ng",
+    canonical: "https://trackam.com.ng",
   },
   category: "Business Software",
 };

@@ -81,7 +81,7 @@ export default function Landing() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname.split(':')[0];
-      const mainDomains = ['localhost', 'trackam.ng', 'www.trackam.ng'];
+      const mainDomains = ['localhost', 'trackam.com.ng', 'www.trackam.com.ng'];
       if (!mainDomains.includes(hostname) && !hostname.endsWith('.railway.app')) {
         router.push('/login');
       }

@@ -5,14 +5,15 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
-  // E.g. "abccorp.trackam.ng" or "abccorp.localhost:3000"
+  // E.g. "abccorp.trackam.com.ng" or "abccorp.localhost:3000"
   // Remove port if exists for cleaner matching
   const cleanHostname = hostname.split(':')[0];
 
   // Define main domains that shouldn't be treated as subdomains
-  const mainDomains = ['localhost', 'trackam.ng', 'www.trackam.ng'];
+  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN || 'localhost';
+  const mainDomains = ['localhost', baseDomain, `www.${baseDomain}`, 'railway.app'];
 
-  const isSubdomain = !mainDomains.includes(cleanHostname);
+  const isSubdomain = !mainDomains.includes(cleanHostname) && !cleanHostname.endsWith('.railway.app');
 
   if (isSubdomain) {
     // Extract the subdomain part
