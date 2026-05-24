@@ -66,12 +66,33 @@ function StatCard({ value, suffix, label, prefix = '', theme = 'dark' }: { value
   );
 }
 
+const iconMap: Record<string, any> = {
+  Users,
+  Target,
+  Briefcase,
+  ClipboardList,
+  FileText,
+  BarChart3
+};
+
 export default function Landing() {
   const isAuthenticated = useStore(state => state.isAuthenticated);
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [cmsData, setCmsData] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/site-settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) {
+          setCmsData(data);
+        }
+      })
+      .catch(err => console.error('Failed to load landing settings:', err));
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -102,7 +123,7 @@ export default function Landing() {
     }
   }, [router]);
 
-  const features = [
+  const defaultFeatures = [
     { icon: Users, title: 'Client Management', desc: 'Organise all your clients, contacts, and their entire history in one place. Never lose track again.', color: 'from-blue-500 to-blue-600' },
     { icon: Target, title: 'Leads & Pipeline', desc: 'Capture every prospect, log call notes, schedule follow-ups, and convert hot leads to deals seamlessly.', color: 'from-purple-500 to-purple-600' },
     { icon: Briefcase, title: 'Deal Tracking', desc: 'Visual Kanban pipeline with real-time value tracking. Know your revenue forecast at a glance.', color: 'from-amber-500 to-orange-500' },
@@ -111,11 +132,48 @@ export default function Landing() {
     { icon: BarChart3, title: 'Analytics Dashboard', desc: 'Revenue trends, win rates, team performance, and deal forecasts — all live, all in one screen.', color: 'from-indigo-500 to-violet-600' },
   ];
 
-  const testimonials = [
+  const defaultTestimonials = [
     { name: 'Adewale Okafor', role: 'CEO, Okafor & Sons Ltd', location: 'Lagos', text: 'Before Trackam, we were managing deals in WhatsApp groups and spreadsheets. Now our entire team is coordinated. We closed 40% more deals last quarter.', rating: 5 },
     { name: 'Ngozi Eze', role: 'MD, Eze Consulting Group', location: 'Abuja', text: 'The invoicing module alone saved us 3 hours a week. Clients receive professional Naira invoices automatically. This is the best investment we made this year.', rating: 5 },
     { name: 'Ibrahim Musa', role: 'Sales Director, NorthTech Solutions', location: 'Kano', text: 'My sales team logs every WhatsApp call, every meeting, every update directly into the lead profile. No more guessing who spoke to who. Total clarity.', rating: 5 },
   ];
+
+  const heroTitle = cmsData?.hero_title || 'The CRM that speaks your business language';
+  const heroSubtitle = cmsData?.hero_subtitle || "Trackam is Nigeria's ultimate CRM and business platform. Manage clients, track deals, and send professional Naira invoices. One flat lifetime fee, unlimited team members.";
+  const priceLicense = cmsData?.price_license || '₦1.2M';
+  const priceMaintenance = cmsData?.price_maintenance || '+ ₦100k/year maintenance & priority support';
+  const contactEmail = cmsData?.contact_email || 'hello@trackam.ng';
+  const contactPhone = cmsData?.contact_phone || '+234 800 TRACKAM';
+  const contactAddress = cmsData?.contact_address || 'Lagos, Nigeria 🇳🇬';
+
+  let features = defaultFeatures;
+  if (cmsData?.features) {
+    try {
+      const list = JSON.parse(cmsData.features);
+      if (Array.isArray(list) && list.length > 0) {
+        features = list.map((item: any) => ({
+          icon: iconMap[item.icon] || Users,
+          title: item.title,
+          desc: item.desc,
+          color: item.color || 'from-emerald-500 to-green-600'
+        }));
+      }
+    } catch (e) {
+      console.error('Failed to parse features CMS data:', e);
+    }
+  }
+
+  let testimonials = defaultTestimonials;
+  if (cmsData?.testimonials) {
+    try {
+      const list = JSON.parse(cmsData.testimonials);
+      if (Array.isArray(list) && list.length > 0) {
+        testimonials = list;
+      }
+    } catch (e) {
+      console.error('Failed to parse testimonials CMS data:', e);
+    }
+  }
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'bg-[#09090f] text-white' : 'bg-[#fafdfb] text-slate-900'} font-sans overflow-x-hidden`}>
@@ -228,15 +286,11 @@ export default function Landing() {
           </div>
 
           <h1 className={`text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6 transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-            The CRM that speaks{' '}
-            <span className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
-              your business language
-            </span>
+            {heroTitle}
           </h1>
 
           <p className={`text-base sm:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8 transition-colors ${theme === 'dark' ? 'text-white/60' : 'text-slate-600'}`}>
-            Trackam is Nigeria&apos;s ultimate CRM and business platform. Manage clients, track deals, and send professional Naira invoices.
-            <strong className={`transition-colors ${theme === 'dark' ? 'text-white/80' : 'text-slate-900 font-bold'}`}> One flat lifetime fee, unlimited team members.</strong>
+            {heroSubtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -468,10 +522,10 @@ export default function Landing() {
                 <p className={`font-medium text-sm transition-colors ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>Everything to run your business, forever.</p>
               </div>
               <div className="mb-2">
-                <span className={`text-5xl font-black transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₦1.2M</span>
+                <span className={`text-5xl font-black transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{priceLicense}</span>
                 <span className={`font-bold ml-2 transition-colors ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>one-off</span>
               </div>
-              <div className={`text-sm font-bold mb-8 transition-colors ${theme === 'dark' ? 'text-green-400' : 'text-emerald-700'}`}>+ ₦100k/year maintenance & priority support</div>
+              <div className={`text-sm font-bold mb-8 transition-colors ${theme === 'dark' ? 'text-green-400' : 'text-emerald-700'}`}>{priceMaintenance}</div>
               <ul className="space-y-3 mb-10">
                 {['Full CRM System', 'Unlimited Team Members', 'Unlimited Clients, Leads & Deals', 'Professional Naira Invoicing', 'Access to Module Store', 'White-glove Onboarding', 'Cloud Hosting Included', '1 Year Priority Support'].map((item) => (
                   <li key={item} className={`flex items-center gap-3 text-sm font-semibold transition-colors ${theme === 'dark' ? 'text-white/80' : 'text-slate-700'}`}>
@@ -538,9 +592,9 @@ export default function Landing() {
           <p className={`font-medium text-lg mb-12 transition-colors ${theme === 'dark' ? 'text-white/50' : 'text-slate-600'}`}>Our team is based in Nigeria. We understand your market.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { icon: PhoneCall, label: 'WhatsApp Us', value: '+234 800 TRACKAM', color: 'from-green-400 to-emerald-500' },
-              { icon: Mail, label: 'Email Us', value: 'hello@trackam.ng', color: 'from-blue-400 to-indigo-500' },
-              { icon: MapPin, label: 'Based In', value: 'Lagos, Nigeria 🇳🇬', color: 'from-rose-400 to-pink-500' },
+              { icon: PhoneCall, label: 'WhatsApp Us', value: contactPhone, color: 'from-green-400 to-emerald-500' },
+              { icon: Mail, label: 'Email Us', value: contactEmail, color: 'from-blue-400 to-indigo-500' },
+              { icon: MapPin, label: 'Based In', value: contactAddress, color: 'from-rose-400 to-pink-500' },
             ].map((item) => (
               <div key={item.label} className={`p-8 border rounded-3xl transition-all group ${
                 theme === 'dark' 

@@ -33,10 +33,14 @@ export async function GET(req: Request) {
       LIMIT 100
     `);
     
+    // Get all modules
+    const modules = await db.query('SELECT * FROM modules ORDER BY name');
+    
     return NextResponse.json({ 
       companies: companies.rows,
       users: users.rows,
-      logs: logs.rows
+      logs: logs.rows,
+      modules: modules.rows
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -50,12 +54,15 @@ export async function PUT(req: Request) {
 
   try {
     await initDb();
-    const { action, targetId, status } = await req.json();
+    const body = await req.json();
+    const { action, targetId, status, price } = body;
 
     if (action === 'suspend_company') {
       await db.query('UPDATE companies SET status = $1 WHERE id = $2', [status, targetId]);
     } else if (action === 'suspend_user') {
       await db.query('UPDATE users SET status = $1 WHERE id = $2', [status, targetId]);
+    } else if (action === 'update_module') {
+      await db.query('UPDATE modules SET price = $1, status = $2 WHERE id = $3', [Number(price) || 0, status, targetId]);
     }
 
     return NextResponse.json({ success: true });

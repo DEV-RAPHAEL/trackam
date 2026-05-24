@@ -138,6 +138,10 @@ export async function initDb(): Promise<void> {
           id TEXT PRIMARY KEY, name TEXT NOT NULL, slug TEXT NOT NULL,
           description TEXT, status TEXT NOT NULL, price REAL
         )`,
+        `CREATE TABLE IF NOT EXISTS site_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL
+        )`,
       ];
 
       for (const sql of tables) await db.query(sql);
@@ -171,6 +175,39 @@ export async function initDb(): Promise<void> {
           `INSERT INTO modules VALUES ('mod-5','Support Tickets','support','Helpdesk for your customers.','locked',29)`,
         ];
         for (const s of seeds) await db.query(s);
+      }
+
+      // Seed site settings once if empty
+      const settingsCheck = await db.query('SELECT COUNT(*) as count FROM site_settings');
+      const settingsCount = parseInt(String((settingsCheck.rows[0] as any).count ?? 0));
+      if (settingsCount === 0) {
+        const defaultFeatures = [
+          { icon: 'Users', title: 'Client Management', desc: 'Organise all your clients, contacts, and their entire history in one place. Never lose track again.', color: 'from-blue-500 to-blue-600' },
+          { icon: 'Target', title: 'Leads & Pipeline', desc: 'Capture every prospect, log call notes, schedule follow-ups, and convert hot leads to deals seamlessly.', color: 'from-purple-500 to-purple-600' },
+          { icon: 'Briefcase', title: 'Deal Tracking', desc: 'Visual Kanban pipeline with real-time value tracking. Know your revenue forecast at a glance.', color: 'from-amber-500 to-orange-500' },
+          { icon: 'ClipboardList', title: 'Task Management', desc: 'Kanban boards, Gantt charts, and task timelines. Assign to team members and track progress live.', color: 'from-emerald-500 to-green-600' },
+          { icon: 'FileText', title: 'Invoicing & Billing', desc: 'Generate branded Naira invoices, send via email, and track payment status automatically.', color: 'from-rose-500 to-pink-600' },
+          { icon: 'BarChart3', title: 'Analytics Dashboard', desc: 'Revenue trends, win rates, team performance, and deal forecasts — all live, all in one screen.', color: 'from-indigo-500 to-violet-600' },
+        ];
+        const defaultTestimonials = [
+          { name: 'Adewale Okafor', role: 'CEO, Okafor & Sons Ltd', location: 'Lagos', text: 'Before Trackam, we were managing deals in WhatsApp groups and spreadsheets. Now our entire team is coordinated. We closed 40% more deals last quarter.', rating: 5 },
+          { name: 'Ngozi Eze', role: 'MD, Eze Consulting Group', location: 'Abuja', text: 'The invoicing module alone saved us 3 hours a week. Clients receive professional Naira invoices automatically. This is the best investment we made this year.', rating: 5 },
+          { name: 'Ibrahim Musa', role: 'Sales Director, NorthTech Solutions', location: 'Kano', text: 'My sales team logs every WhatsApp call, every meeting, every update directly into the lead profile. No more guessing who spoke to who. Total clarity.', rating: 5 },
+        ];
+        const defaultSettings = [
+          ['hero_title', 'The CRM that speaks your business language'],
+          ['hero_subtitle', 'Trackam is Nigeria\'s ultimate CRM and business platform. Manage clients, track deals, and send professional Naira invoices. One flat lifetime fee, unlimited team members.'],
+          ['price_license', '₦1.2M'],
+          ['price_maintenance', '+ ₦100k/year maintenance & priority support'],
+          ['features', JSON.stringify(defaultFeatures)],
+          ['testimonials', JSON.stringify(defaultTestimonials)],
+          ['contact_email', 'contact@trackam.com.ng'],
+          ['contact_phone', '+234 812 345 6789'],
+          ['contact_address', '32, Admiralty Way, Lekki Phase 1, Lagos, Nigeria']
+        ];
+        for (const [k, v] of defaultSettings) {
+          await db.query('INSERT INTO site_settings (key, value) VALUES ($1, $2)', [k, v]);
+        }
       }
 
       // Seed default platform superadmin user if not already present
