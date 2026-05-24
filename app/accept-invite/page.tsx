@@ -6,7 +6,7 @@ import { useStore } from '@/lib/store';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 
 function AcceptInviteContent() {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const { verifyInvite, acceptInvite } = useStore();
   const router = useRouter();

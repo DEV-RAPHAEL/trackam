@@ -16,7 +16,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     
     const userResult = await db.query('SELECT * FROM users WHERE id = $1', [id]);
     if (userResult.rows.length === 0) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    const user = userResult.rows[0];
+    const user = userResult.rows[0] as any;
 
     // Security: Ensure requester belongs to same company
     if (requester?.company_id !== user.company_id && requester?.role !== 'admin') {

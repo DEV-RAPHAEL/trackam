@@ -51,7 +51,7 @@ export function PaymentButton({ amount, email, metadata, onSuccess, label = "Pay
     return (
       <button 
         onClick={handleMockPayment}
-        className={`bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors ${className}`}
+        className={`bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors ${className}`}
       >
         {label} (Mock)
       </button>
@@ -60,8 +60,8 @@ export function PaymentButton({ amount, email, metadata, onSuccess, label = "Pay
 
   return (
     <button 
-      onClick={() => initializePayment(handlePaystackSuccess, handlePaystackClose)}
-      className={`bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors ${className}`}
+      onClick={() => initializePayment({ onSuccess: handlePaystackSuccess, onClose: handlePaystackClose })}
+      className={`bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors ${className}`}
     >
       {label}
     </button>

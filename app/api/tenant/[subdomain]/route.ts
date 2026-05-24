@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db, initDb } from '@/lib/db';
 
-export async function GET(req: Request, { params }: { params: { subdomain: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ subdomain: string }> }) {
   try {
     await initDb();
-    // Resolve the promise if using Next.js 15+ dynamic params
-    const { subdomain } = await Promise.resolve(params);
+    const { subdomain } = await params;
 
     if (!subdomain) {
       return NextResponse.json({ error: 'Subdomain required' }, { status: 400 });

@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const user = userResult.rows[0];
+    const user = userResult.rows[0] as any;
     
     if (user.password) {
       return NextResponse.json({ error: 'Account is already fully set up. Please log in directly.' }, { status: 400 });

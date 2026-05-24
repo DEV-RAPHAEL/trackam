@@ -112,8 +112,8 @@ export default function SettingsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm text-slate-500">Manage your company profile and branding.</p>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage your company profile and branding.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -123,7 +123,9 @@ export default function SettingsPage() {
             onClick={() => setActiveTab('branding')}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-bold text-sm transition-all",
-              activeTab === 'branding' ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"
+              activeTab === 'branding' 
+                ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400" 
+                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
             )}
            >
               <Palette className="h-4 w-4" /> Branding & Profile
@@ -132,7 +134,9 @@ export default function SettingsPage() {
             onClick={() => setActiveTab('modules')}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-bold text-sm transition-all",
-              activeTab === 'modules' ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"
+              activeTab === 'modules' 
+                ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400" 
+                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
             )}
            >
               <Package className="h-4 w-4" /> Modules & Subscription
@@ -141,10 +145,12 @@ export default function SettingsPage() {
             onClick={() => setActiveTab('team')}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-bold text-sm transition-all",
-              activeTab === 'team' ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"
+              activeTab === 'team' 
+                ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400" 
+                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
             )}
            >
-              <User className="h-4 w-4" /> Team Management
+              <Users className="h-4 w-4" /> Team Management
            </button>
         </div>
 
@@ -152,11 +158,11 @@ export default function SettingsPage() {
           <div className="md:col-span-2 space-y-6">
             <form onSubmit={handleSave} className="space-y-8">
               {/* Branding Card */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+              <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <Palette className="h-4 w-4 text-indigo-500" />
-                      <span className="text-xs font-black uppercase tracking-widest text-slate-700">Company Branding</span>
+                      <Palette className="h-4 w-4 text-emerald-500" />
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Company Branding</span>
                     </div>
                     <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: form.brand_color }} />
                  </div>
@@ -165,7 +171,7 @@ export default function SettingsPage() {
                     {/* Logo Mockup */}
                     <div className="flex items-start gap-6">
                        <div className="relative group">
-                          <div className="h-24 w-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 overflow-hidden">
+                          <div className="h-24 w-24 rounded-2xl bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 overflow-hidden">
                              {form.logo ? (
                                <img src={form.logo} alt="Logo" className="h-full w-full object-contain p-2" />
                              ) : (
@@ -191,12 +197,12 @@ export default function SettingsPage() {
                                }
                              }}
                           />
-                          <label htmlFor="logo-upload" className="mt-3 cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-slate-200 rounded text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-white hover:bg-slate-50 transition-colors w-full text-center">
+                          <label htmlFor="logo-upload" className="mt-3 cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-white/10 rounded text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors w-full text-center">
                             Upload Image
                           </label>
                        </div>
                        <div className="flex-1">
-                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Brand Accent Color</label>
+                          <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Brand Accent Color</label>
                           <div className="flex flex-wrap gap-2 mb-4">
                              {presetColors.map(c => (
                                <button
@@ -205,7 +211,9 @@ export default function SettingsPage() {
                                  onClick={() => setForm({...form, brand_color: c})}
                                  className={cn(
                                    "h-8 w-8 rounded-full border-2 transition-all flex items-center justify-center",
-                                   form.brand_color === c ? "border-slate-800 scale-110 shadow-lg" : "border-transparent hover:scale-105"
+                                   form.brand_color === c 
+                                     ? "border-slate-800 dark:border-white scale-110 shadow-lg" 
+                                     : "border-transparent hover:scale-105"
                                  )}
                                  style={{ backgroundColor: c }}
                                >
@@ -219,54 +227,54 @@ export default function SettingsPage() {
                                className="h-8 w-8 rounded-full bg-transparent border-none cursor-pointer" 
                              />
                           </div>
-                          <p className="text-xs text-slate-400 leading-relaxed italic">This color will be used for your invoice headers, highlights, and primary buttons.</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed italic">This color will be used for your invoice headers, highlights, and primary buttons.</p>
                        </div>
                     </div>
                  </div>
               </div>
   
               {/* Subdomain Card */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-indigo-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">Workspace Address</span>
+              <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Workspace Address</span>
                  </div>
                  
                  <div className="p-6 space-y-4">
                     <div>
-                       <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Workspace Subdomain</label>
+                       <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Workspace Subdomain</label>
                        <div className="flex rounded-lg shadow-sm">
                           <input
                              type="text"
                              disabled={currentUser?.role !== 'owner'}
                              value={form.subdomain}
                              onChange={e => setForm({...form, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, '')})}
-                             className="block w-full rounded-l-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition disabled:opacity-60"
+                             className="block w-full rounded-l-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition disabled:opacity-60"
                              placeholder="my-company"
                           />
-                          <span className="inline-flex items-center px-4 rounded-r-lg border border-l-0 border-slate-200 bg-slate-100 text-slate-500 text-sm font-medium">
+                          <span className="inline-flex items-center px-4 rounded-r-lg border border-l-0 border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 text-sm font-medium">
                              .{baseDomain}
                           </span>
                        </div>
                        
-                       <p className="mt-2 text-xs text-slate-400">
-                          Your current workspace URL is: <span className="font-bold text-indigo-600">{form.subdomain || 'your-subdomain'}.{baseDomain}</span>
+                       <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+                          Your current workspace URL is: <span className="font-bold text-emerald-600 dark:text-emerald-400">{form.subdomain || 'your-subdomain'}.{baseDomain}</span>
                        </p>
                     </div>
 
                     {currentUser?.role === 'owner' ? (
-                       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-2.5">
+                       <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-500/20 rounded-xl p-3.5 flex items-start gap-2.5">
                           <span className="text-amber-500 text-base leading-none">⚠️</span>
-                          <p className="text-xs text-amber-800 leading-relaxed">
+                          <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
                              <strong>Warning:</strong> Changing your subdomain will immediately update your workspace URL. 
                              You and your team members will need to use the new URL to log in. 
                              You will be automatically redirected to the new address upon saving.
                           </p>
                        </div>
                     ) : (
-                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-start gap-2">
-                          <span className="text-slate-400 text-xs">ℹ️</span>
-                          <p className="text-xs text-slate-500 leading-none">
+                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3 flex items-start gap-2">
+                          <span className="text-slate-400 dark:text-slate-500 text-xs">ℹ️</span>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 leading-none">
                              Only the workspace owner can modify the subdomain.
                           </p>
                        </div>
@@ -275,68 +283,68 @@ export default function SettingsPage() {
               </div>
 
               {/* Profile Info */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                    <Building className="h-4 w-4 text-indigo-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">Company Profile</span>
+              <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex items-center gap-2">
+                    <Building className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Company Profile</span>
                  </div>
                  
                  <div className="p-6 grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Business Name</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Business Name</label>
                       <input
                         type="text"
                         value={form.name}
                         onChange={e => setForm({...form, name: e.target.value})}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Contact Email</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Contact Email</label>
                       <div className="relative">
-                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                          <input
                           type="email"
                           value={form.email}
                           onChange={e => setForm({...form, email: e.target.value})}
-                          className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Phone Number</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Phone Number</label>
                       <div className="relative">
-                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                          <input
                           type="text"
                           value={form.phone}
                           onChange={e => setForm({...form, phone: e.target.value})}
-                          className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                         />
                       </div>
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Website</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Website</label>
                       <div className="relative">
-                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                          <input
                           type="text"
                           value={form.website}
                           onChange={e => setForm({...form, website: e.target.value})}
-                          className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                           placeholder="www.yourcompany.com"
                         />
                       </div>
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Business Address</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Business Address</label>
                       <div className="relative">
-                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                          <input
                           type="text"
                           value={form.address}
                           onChange={e => setForm({...form, address: e.target.value})}
-                          className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                         />
                       </div>
                     </div>
@@ -344,39 +352,39 @@ export default function SettingsPage() {
               </div>
 
               {/* Bank Details */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                    <Building className="h-4 w-4 text-indigo-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">Bank Details</span>
+              <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex items-center gap-2">
+                    <Building className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Bank Details</span>
                  </div>
                  
                  <div className="p-6 grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Bank Name</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Bank Name</label>
                       <input
                         type="text"
                         value={form.bank_name}
                         onChange={e => setForm({...form, bank_name: e.target.value})}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                         placeholder="e.g. Chase Bank"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Account Name</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Account Name</label>
                       <input
                         type="text"
                         value={form.account_name}
                         onChange={e => setForm({...form, account_name: e.target.value})}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Account Number</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Account Number</label>
                       <input
                         type="text"
                         value={form.account_number}
                         onChange={e => setForm({...form, account_number: e.target.value})}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                       />
                     </div>
                  </div>
@@ -386,7 +394,7 @@ export default function SettingsPage() {
                  <button
                     type="submit"
                     disabled={isSaving}
-                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-8 py-3 text-sm font-black uppercase tracking-widest text-white hover:bg-indigo-500 active:scale-95 transition-all shadow-xl shadow-indigo-200 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-8 py-3 text-sm font-black uppercase tracking-widest text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50"
                  >
                     {isSaving ? <Upload className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     Save Branding Changes
@@ -400,10 +408,10 @@ export default function SettingsPage() {
           <div className="md:col-span-2 space-y-6">
             {/* Add Team Member Card */}
             {currentUser?.role === 'owner' && (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                  <User className="h-4 w-4 text-indigo-500" />
-                  <span className="text-xs font-black uppercase tracking-widest text-slate-700">Add Team Member</span>
+              <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex items-center gap-2">
+                  <User className="h-4 w-4 text-emerald-500" />
+                  <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Add Team Member</span>
                 </div>
                 <form 
                   onSubmit={(e) => {
@@ -415,7 +423,6 @@ export default function SettingsPage() {
                     
                     if (currentCompany) {
                       addUser({
-                        company_id: currentCompany.id,
                         name,
                         email,
                         role
@@ -427,23 +434,23 @@ export default function SettingsPage() {
                 >
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Full Name</label>
-                      <input name="name" required type="text" className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Full Name</label>
+                      <input name="name" required type="text" className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Email Address</label>
-                      <input name="email" required type="email" className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Email Address</label>
+                      <input name="email" required type="email" className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" />
                     </div>
                   </div>
                   <div className="flex items-end gap-4">
                     <div className="flex-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Access Level</label>
-                      <select name="role" required className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                        <option value="user">User (Basic Access)</option>
-                        <option value="admin">Admin (Manage Data)</option>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Access Level</label>
+                      <select name="role" required className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                        <option value="user" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">User (Basic Access)</option>
+                        <option value="admin" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">Admin (Manage Data)</option>
                       </select>
                     </div>
-                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-100">
+                    <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-500/25">
                       Invite Member
                     </button>
                   </div>
@@ -452,33 +459,33 @@ export default function SettingsPage() {
             )}
 
             {/* Team List Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-               <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div className="bg-white dark:bg-[#0d0d1a] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden">
+               <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-indigo-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">Team Members</span>
+                    <Users className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Team Members</span>
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400">{(team || []).length} Total</span>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">{(team || []).length} Total</span>
                </div>
                
-               <div className="divide-y divide-slate-100">
+               <div className="divide-y divide-slate-100 dark:divide-white/5">
                   {(team || []).map((member) => (
-                    <div key={member.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div key={member.id} className="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
+                        <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-350 font-bold text-xs">
                           {member.name[0]}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{member.name}</p>
-                          <p className="text-xs text-slate-500">{member.email}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{member.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{member.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={cn(
                           "text-[9px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-full",
-                          member.role === 'owner' ? "bg-amber-100 text-amber-700" :
-                          member.role === 'admin' ? "bg-indigo-100 text-indigo-700" :
-                          "bg-slate-100 text-slate-600"
+                          member.role === 'owner' ? "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300" :
+                          member.role === 'admin' ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" :
+                          "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                         )}>
                           {member.role}
                         </span>
@@ -486,14 +493,14 @@ export default function SettingsPage() {
                           <div className="flex items-center gap-1">
                             <button 
                               onClick={() => resendInvite(member.id)}
-                              className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                              className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg transition-all"
                               title="Resend Invite"
                             >
                               <Mail className="h-4 w-4" />
                             </button>
                             <button 
                               onClick={() => deleteUser(member.id)}
-                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                              className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-450 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-all"
                               title="Remove Member"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -512,23 +519,25 @@ export default function SettingsPage() {
           <div className="md:col-span-2 space-y-6">
             <div className="grid grid-cols-1 gap-4">
               {(modules || []).map((module) => (
-                <div key={module.id} className="bg-white rounded-2xl border border-slate-200 p-6 flex items-center justify-between shadow-sm">
+                <div key={module.id} className="bg-white dark:bg-[#0d0d1a] border border-slate-200 dark:border-white/5 p-6 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "p-3 rounded-xl",
-                      module.status === 'active' ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"
+                      module.status === 'active' 
+                        ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
+                        : "bg-slate-50 dark:bg-white/5 text-slate-400 dark:text-slate-500"
                     )}>
                       {module.status === 'active' ? <Unlock className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-800">{module.name}</h3>
-                      <p className="text-xs text-slate-500 max-w-md">{module.description}</p>
+                      <h3 className="font-bold text-slate-800 dark:text-white">{module.name}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md">{module.description}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                           {formatCurrency(module.price)}/mo
                         </span>
                         {module.status === 'active' && (
-                          <span className="bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Active</span>
+                          <span className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Active</span>
                         )}
                       </div>
                     </div>
@@ -547,7 +556,7 @@ export default function SettingsPage() {
                       className="px-6 py-2 text-xs"
                     />
                   ) : (
-                    <button disabled className="bg-slate-100 text-slate-400 font-bold py-2 px-6 rounded-lg text-xs cursor-not-allowed">
+                    <button disabled className="bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 font-bold py-2 px-6 rounded-lg text-xs cursor-not-allowed">
                       Purchased
                     </button>
                   )}

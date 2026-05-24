@@ -95,14 +95,14 @@ export function GanttView({ tasks, onOpen }: Props) {
                     style={{ width: DAY_PX, flexShrink: 0 }}
                     className={cn(
                       'flex flex-col items-center justify-center border-r border-slate-100 text-center',
-                      isToday && 'bg-indigo-50',
+                      isToday && 'bg-emerald-50',
                       isWeekend && !isToday && 'bg-slate-50/80'
                     )}
                   >
-                    <span className={cn('text-[9px] font-bold', isToday ? 'text-indigo-600' : 'text-slate-400')}>
+                    <span className={cn('text-[9px] font-bold', isToday ? 'text-emerald-600' : 'text-slate-400')}>
                       {d.toLocaleDateString('en', { weekday: 'narrow' })}
                     </span>
-                    <span className={cn('text-[10px] font-bold', isToday ? 'text-indigo-700' : 'text-slate-500')}>
+                    <span className={cn('text-[10px] font-bold', isToday ? 'text-emerald-700' : 'text-slate-500')}>
                       {d.getDate()}
                     </span>
                   </div>
@@ -114,7 +114,7 @@ export function GanttView({ tasks, onOpen }: Props) {
             <div className="relative" style={{ width: DAYS * DAY_PX }}>
               {/* Today line */}
               <div
-                className="absolute top-0 bottom-0 w-px bg-indigo-400 z-10 opacity-60"
+                className="absolute top-0 bottom-0 w-px bg-emerald-400 z-10 opacity-60"
                 style={{ left: todayOffset * DAY_PX + DAY_PX / 2 }}
               />
 
@@ -179,7 +179,7 @@ export function GanttView({ tasks, onOpen }: Props) {
           </span>
         ))}
         <span className="ml-auto flex items-center gap-1">
-          <span className="w-3 h-0.5 bg-indigo-400 opacity-60 inline-block" /> Today
+          <span className="w-3 h-0.5 bg-emerald-400 opacity-60 inline-block" /> Today
         </span>
       </div>
     </div>

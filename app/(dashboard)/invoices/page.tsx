@@ -71,9 +71,7 @@ export default function InvoicesPage() {
     e.preventDefault();
     if (!newInvoice.client_id) return;
     
-    const invoiceId = crypto.randomUUID();
     addInvoice({
-      id: invoiceId,
       company_id: currentCompany?.id || '',
       client_id: newInvoice.client_id,
       amount: totalAmount,
@@ -117,13 +115,13 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Invoices</h1>
-          <p className="mt-1 text-sm text-slate-500">Track billing and collect payments.</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Invoices</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Track billing and collect payments.</p>
         </div>
         <div className="flex gap-3">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 active:scale-95 transition-all"
           >
             <Plus className="h-4 w-4" />
             New Invoice
@@ -133,35 +131,35 @@ export default function InvoicesPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4">
-          <div className="p-3 rounded-lg bg-orange-50 text-orange-500"><AlertCircle className="h-5 w-5" /></div>
+        <div className="bg-white dark:bg-[#0d0d1a] rounded-xl border border-slate-200 dark:border-white/5 p-5 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 text-orange-500"><AlertCircle className="h-5 w-5" /></div>
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Outstanding</p>
-            <p className="text-xl font-bold text-slate-800">{formatCurrency(totalUnpaid)}</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Outstanding</p>
+            <p className="text-xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalUnpaid)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4">
-          <div className="p-3 rounded-lg bg-emerald-50 text-emerald-500"><CheckCircle className="h-5 w-5" /></div>
+        <div className="bg-white dark:bg-[#0d0d1a] rounded-xl border border-slate-200 dark:border-white/5 p-5 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500"><CheckCircle className="h-5 w-5" /></div>
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Collected</p>
-            <p className="text-xl font-bold text-slate-800">{formatCurrency(totalPaid)}</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Collected</p>
+            <p className="text-xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalPaid)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 text-slate-400">
-          <div className="p-3 rounded-lg bg-slate-50"><Palette className="h-5 w-5" /></div>
+        <div className="bg-white dark:bg-[#0d0d1a] rounded-xl border border-slate-200 dark:border-white/5 p-5 flex items-center gap-4 text-slate-400 dark:text-slate-500">
+          <div className="p-3 rounded-lg bg-slate-50 dark:bg-white/5"><Palette className="h-5 w-5" /></div>
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Templates</p>
-            <p className="text-xl font-bold text-slate-800">{(invoiceTemplates || []).length}</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Templates</p>
+            <p className="text-xl font-bold text-slate-800 dark:text-white">{(invoiceTemplates || []).length}</p>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#0d0d1a] rounded-xl shadow-sm border border-slate-200 dark:border-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+              <tr className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                 <th className="px-6 py-3">Invoice / Client</th>
                 <th className="px-6 py-3">Amount</th>
                 <th className="px-6 py-3">Status</th>
@@ -169,49 +167,53 @@ export default function InvoicesPage() {
                 <th className="px-6 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white text-sm divide-y divide-slate-50">
+            <tbody className="bg-white dark:bg-[#0d0d1a] text-sm divide-y divide-slate-50 dark:divide-white/5">
               {(invoices || []).map((invoice) => {
                 const client = (clients || []).find(c => c.id === invoice.client_id);
                 return (
-                  <tr key={invoice.id} className="hover:bg-slate-50 transition-colors group">
+                  <tr key={invoice.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className={cn(
                           "p-2 rounded-lg shrink-0",
-                          invoice.is_sent ? "bg-indigo-50 text-indigo-500" : "bg-slate-50 text-slate-400"
+                          invoice.is_sent 
+                            ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 dark:text-emerald-400" 
+                            : "bg-slate-50 dark:bg-white/5 text-slate-400 dark:text-slate-500"
                         )}>
                           <FileText className="h-4 w-4" />
                         </div>
                         <div>
-                          <div className="font-semibold text-slate-900 flex items-center gap-2">
+                          <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                             INV-{invoice.id.substring(0, 6).toUpperCase()}
-                            {invoice.is_sent && <MailCheck className="h-3 w-3 text-indigo-500" title="Sent to client" />}
+                            {invoice.is_sent && <MailCheck className="h-3 w-3 text-emerald-500 dark:text-emerald-400" title="Sent to client" />}
                           </div>
-                          <div className="text-xs text-slate-500 mt-0.5">{client?.name || 'Unknown Client'}</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{client?.name || 'Unknown Client'}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">{formatCurrency(invoice.amount)}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">{formatCurrency(invoice.amount)}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
                         <span className={cn(
                           "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide w-fit",
-                          invoice.status === 'paid' ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-500"
+                          invoice.status === 'paid' 
+                            ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
+                            : "bg-orange-50 dark:bg-orange-950/20 text-orange-500"
                         )}>
                           {invoice.status === 'paid' ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                           {invoice.status}
                         </span>
                         {invoice.last_sent_at && (
-                          <span className="text-[9px] text-slate-400 font-medium">Last sent: {formatDate(invoice.last_sent_at)}</span>
+                          <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">Last sent: {formatDate(invoice.last_sent_at)}</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-500 text-xs font-medium">{formatDate(invoice.due_date)}</td>
+                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs font-medium">{formatDate(invoice.due_date)}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => setViewingInvoiceId(invoice.id)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+                          className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all"
                           title="View & Print"
                         >
                           <Eye className="h-4 w-4" />
@@ -220,7 +222,7 @@ export default function InvoicesPage() {
                         {!invoice.is_sent ? (
                           <button 
                             onClick={() => sendInvoice(invoice.id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all"
                             title="Send to client"
                           >
                             <Send className="h-4 w-4" />
@@ -228,7 +230,7 @@ export default function InvoicesPage() {
                         ) : invoice.status === 'unpaid' && (
                           <button 
                             onClick={() => sendFollowUp(invoice.id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
+                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all"
                             title="Send payment reminder"
                           >
                             <Bell className="h-4 w-4" />
@@ -236,11 +238,11 @@ export default function InvoicesPage() {
                         )}
                         
                         {invoice.status === 'unpaid' && (
-                          <button onClick={() => markPaid(invoice.id)} className="ml-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wide transition-colors">
+                          <button onClick={() => markPaid(invoice.id)} className="ml-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 uppercase tracking-wide transition-colors">
                             Mark Paid
                           </button>
                         )}
-                        <button onClick={() => deleteInvoice(invoice.id)} className="ml-2 p-2 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all">
+                        <button onClick={() => deleteInvoice(invoice.id)} className="ml-2 p-2 rounded-lg text-slate-350 dark:text-slate-650 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -256,18 +258,18 @@ export default function InvoicesPage() {
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-          style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}
+          style={{ backgroundColor: 'rgba(9, 9, 15, 0.7)', backdropFilter: 'blur(4px)' }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
           <div className={cn(
-            "relative bg-white rounded-2xl shadow-2xl transition-all duration-300 flex flex-col overflow-hidden",
+            "relative bg-white dark:bg-[#0d0d1a] border border-slate-200 dark:border-white/5 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col overflow-hidden",
             showPreview ? "w-full max-w-6xl h-[90vh]" : "w-full max-w-3xl max-h-[90vh]"
           )}>
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-50 rounded-lg"><FileText className="h-5 w-5 text-indigo-600" /></div>
-                <h2 className="text-base font-semibold text-slate-900">Create New Invoice</h2>
+                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg"><FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div>
+                <h2 className="text-base font-semibold text-slate-900 dark:text-white">Create New Invoice</h2>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -275,13 +277,13 @@ export default function InvoicesPage() {
                   onClick={() => setShowPreview(!showPreview)}
                   className={cn(
                     "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
-                    showPreview ? "bg-indigo-100 text-indigo-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    showPreview ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
                   )}
                 >
                   <Eye className="h-3.5 w-3.5" />
                   {showPreview ? "Edit Mode" : "Preview Template"}
                 </button>
-                <button onClick={closeModal} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                <button onClick={closeModal} className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -291,36 +293,36 @@ export default function InvoicesPage() {
               {/* Form Side */}
               <div className={cn(
                 "flex-1 overflow-y-auto px-6 py-6 transition-all duration-300",
-                showPreview ? "border-r border-slate-100" : ""
+                showPreview ? "border-r border-slate-100 dark:border-white/5" : ""
               )}>
                 <form onSubmit={handleAdd} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Client</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Client</label>
                       <select
                         required
                         value={newInvoice.client_id}
                         onChange={e => setNewInvoice({ ...newInvoice, client_id: e.target.value })}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                       >
-                        <option value="">Select a client…</option>
-                        {(clients || []).map(c => <option key={c.id} value={c.id}>{c.name} — {c.company}</option>)}
+                        <option value="" className="bg-white dark:bg-slate-900 text-slate-950 dark:text-slate-300">Select a client…</option>
+                        {(clients || []).map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">{c.name} — {c.company}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Due Date</label>
+                      <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Due Date</label>
                       <input
                         required
                         type="date"
                         value={newInvoice.due_date}
                         onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })}
-                        className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Template Style</label>
+                    <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Template Style</label>
                     <div className="grid grid-cols-3 gap-3">
                       {(invoiceTemplates || []).map(tpl => (
                         <button
@@ -330,16 +332,16 @@ export default function InvoicesPage() {
                           className={cn(
                             "flex flex-col items-center p-3 rounded-xl border transition-all text-left",
                             newInvoice.template_id === tpl.id 
-                              ? "border-indigo-500 bg-indigo-50/50 shadow-sm" 
-                              : "border-slate-100 bg-white hover:border-slate-200"
+                              ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm" 
+                              : "border-slate-100 dark:border-white/5 bg-white dark:bg-white/5 hover:border-slate-200 dark:hover:border-white/10"
                           )}
                         >
-                          <div className="w-full h-8 rounded mb-2 bg-slate-200 overflow-hidden flex flex-col gap-1 p-1">
+                          <div className="w-full h-8 rounded mb-2 bg-slate-200 dark:bg-slate-800 overflow-hidden flex flex-col gap-1 p-1">
                              <div className="h-1 w-1/2 bg-slate-400 rounded-full" style={newInvoice.template_id === tpl.id ? {backgroundColor: tpl.accent_color} : {}} />
-                             <div className="h-1 w-full bg-slate-300 rounded-full" />
-                             <div className="h-1 w-full bg-slate-300 rounded-full" />
+                             <div className="h-1 w-full bg-slate-300 dark:bg-slate-700 rounded-full" />
+                             <div className="h-1 w-full bg-slate-300 dark:bg-slate-700 rounded-full" />
                           </div>
-                          <span className="text-[10px] font-bold text-slate-700 truncate w-full text-center">{tpl.name}</span>
+                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 truncate w-full text-center">{tpl.name}</span>
                         </button>
                       ))}
                     </div>
@@ -348,11 +350,11 @@ export default function InvoicesPage() {
                   {/* Line Items */}
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Line Items</label>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Line Items</label>
                       <button
                         type="button"
                         onClick={handleAddItem}
-                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-widest"
+                        className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 uppercase tracking-widest"
                       >
                         + Add Item
                       </button>
@@ -367,7 +369,7 @@ export default function InvoicesPage() {
                               placeholder="Description"
                               value={item.description}
                               onChange={e => handleUpdateItem(item.id, { description: e.target.value })}
-                              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                             />
                           </div>
                           <div className="col-span-2">
@@ -378,7 +380,7 @@ export default function InvoicesPage() {
                               placeholder="Qty"
                               value={item.quantity}
                               onChange={e => handleUpdateItem(item.id, { quantity: parseInt(e.target.value) || 0 })}
-                              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                             />
                           </div>
                           <div className="col-span-3">
@@ -388,14 +390,14 @@ export default function InvoicesPage() {
                               placeholder="Rate"
                               value={item.rate || ''}
                               onChange={e => handleUpdateItem(item.id, { rate: parseFloat(e.target.value) || 0 })}
-                              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                             />
                           </div>
                           <div className="col-span-1 flex justify-center pb-2">
                             <button
                               type="button"
                               onClick={() => handleRemoveItem(item.id)}
-                              className="text-slate-300 hover:text-red-500 transition-colors"
+                              className="text-slate-300 dark:text-slate-650 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                             >
                               <X className="h-4 w-4" />
                             </button>
@@ -406,30 +408,30 @@ export default function InvoicesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Notes (Optional)</label>
+                    <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Notes (Optional)</label>
                     <textarea
                       rows={2}
                       value={newInvoice.notes}
                       onChange={e => setNewInvoice({ ...newInvoice, notes: e.target.value })}
                       placeholder="Thank you for your business..."
-                      className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+                      className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 py-2 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition resize-none placeholder-slate-400 dark:placeholder-slate-650"
                     />
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                  <div className="flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl">
                     <input
                       type="checkbox"
                       id="send_immediately"
                       checked={newInvoice.send_immediately}
                       onChange={e => setNewInvoice({ ...newInvoice, send_immediately: e.target.checked })}
-                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                     />
-                    <label htmlFor="send_immediately" className="text-xs font-bold text-indigo-700 cursor-pointer select-none">
+                    <label htmlFor="send_immediately" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 cursor-pointer select-none">
                       Send to client automatically via email on creation
                     </label>
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 mt-3">
+                  <div className="flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl mt-3">
                     <input
                       type="checkbox"
                       id="is_recurring"
@@ -437,7 +439,7 @@ export default function InvoicesPage() {
                       onChange={e => setNewInvoice({ ...newInvoice, is_recurring: e.target.checked })}
                       className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                     />
-                    <label htmlFor="is_recurring" className="text-xs font-bold text-emerald-700 cursor-pointer select-none">
+                    <label htmlFor="is_recurring" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 cursor-pointer select-none">
                       Monthly Retainer (Auto-generate every month)
                     </label>
                   </div>
@@ -447,12 +449,12 @@ export default function InvoicesPage() {
 
               {/* Preview Side */}
               {showPreview && (
-                <div className="flex-1 bg-slate-50 overflow-hidden flex flex-col border-l border-slate-100">
-                   <div className="p-4 bg-white border-b border-slate-100 flex items-center justify-between shrink-0">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Template Preview</span>
+                <div className="flex-1 bg-slate-50 dark:bg-black/20 overflow-hidden flex flex-col border-l border-slate-100 dark:border-white/5">
+                   <div className="p-4 bg-white dark:bg-[#0d0d1a] border-b border-slate-100 dark:border-white/5 flex items-center justify-between shrink-0">
+                      <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Live Template Preview</span>
                       <div className="flex items-center gap-2">
                          <div className="w-3 h-3 rounded-full" style={{backgroundColor: selectedTemplate?.accent_color}} />
-                         <span className="text-[10px] font-bold text-slate-600">{selectedTemplate?.name}</span>
+                         <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{selectedTemplate?.name}</span>
                       </div>
                    </div>
                    <div className="flex-1 overflow-auto p-8">
@@ -470,23 +472,23 @@ export default function InvoicesPage() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5 flex items-center justify-between shrink-0">
                <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Amount</p>
-                  <p className="text-xl font-black text-slate-800">{formatCurrency(totalAmount)}</p>
+                  <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Total Amount</p>
+                  <p className="text-xl font-black text-slate-800 dark:text-white">{formatCurrency(totalAmount)}</p>
                </div>
                <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-lg border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                  className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d0d1a] px-6 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAdd}
                   disabled={!newInvoice.client_id || totalAmount === 0}
-                  className="rounded-lg bg-indigo-600 px-8 py-2.5 text-sm font-black uppercase tracking-widest text-white hover:bg-indigo-500 active:scale-95 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-lg bg-emerald-600 px-8 py-2.5 text-sm font-black uppercase tracking-widest text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Create Invoice
                 </button>

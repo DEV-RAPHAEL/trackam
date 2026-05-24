@@ -53,7 +53,7 @@ export function NotificationsDropdown() {
           <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50 animate-in slide-in-from-top-2">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-800 text-sm">Notifications</h3>
-              <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
                 {followUps.length} New
               </span>
             </div>
@@ -97,7 +97,7 @@ export function NotificationsDropdown() {
             <div className="p-2 border-t border-slate-100 bg-slate-50">
               <button 
                 onClick={() => { setIsOpen(false); router.push('/leads'); }}
-                className="w-full text-center text-xs font-bold text-indigo-600 hover:text-indigo-700 py-2"
+                className="w-full text-center text-xs font-bold text-emerald-600 hover:text-emerald-700 py-2"
               >
                 View All Leads
               </button>

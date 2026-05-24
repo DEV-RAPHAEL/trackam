@@ -27,10 +27,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ companyI
 
     return NextResponse.json({
       summary: {
-        clients: parseInt(clients.rows[0].count),
-        leads: parseInt(leads.rows[0].count),
-        deals: parseInt(deals.rows[0].count),
-        tasks: parseInt(tasks.rows[0].count),
+        clients: parseInt((clients.rows[0] as any).count),
+        leads: parseInt((leads.rows[0] as any).count),
+        deals: parseInt((deals.rows[0] as any).count),
+        tasks: parseInt((tasks.rows[0] as any).count),
         revenue: totalRevenue,
         pendingRevenue
       }

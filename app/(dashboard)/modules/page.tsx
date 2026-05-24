@@ -21,19 +21,19 @@ export default function ModulesPage() {
             key={module.id} 
             className={cn(
               "bg-white overflow-hidden rounded-xl border shadow-sm flex flex-col transition-all",
-              module.status === 'active' ? 'border-indigo-200 ring-1 ring-indigo-200' : 'border-slate-200 hover:border-indigo-300'
+              module.status === 'active' ? 'border-emerald-200 ring-1 ring-emerald-200' : 'border-slate-200 hover:border-emerald-300'
             )}
           >
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div className={cn(
                   "p-2 rounded-lg",
-                  module.status === 'active' ? "bg-indigo-100/50 text-indigo-600" : "bg-slate-100 text-slate-500"
+                  module.status === 'active' ? "bg-emerald-100/50 text-emerald-600" : "bg-slate-100 text-slate-500"
                 )}>
                   <Blocks className="h-6 w-6" />
                 </div>
                 {module.status === 'active' && (
-                  <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide text-indigo-700">
+                  <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide text-emerald-700">
                     <CheckCircle2 className="mr-1 h-3 w-3" /> Active
                   </span>
                 )}
@@ -59,7 +59,7 @@ export default function ModulesPage() {
                 ) : (
                   <button 
                     onClick={() => unlockModule(module.id)}
-                    className="px-4 py-2 bg-indigo-500 text-white rounded-md text-xs font-bold uppercase tracking-wide hover:bg-indigo-400 transition-colors shadow-sm"
+                    className="px-4 py-2 bg-emerald-500 text-white rounded-md text-xs font-bold uppercase tracking-wide hover:bg-emerald-400 transition-colors shadow-sm"
                   >
                     Upgrade
                   </button>

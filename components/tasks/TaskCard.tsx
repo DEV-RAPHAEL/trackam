@@ -27,7 +27,7 @@ export function TaskCard({ task, onOpen, onEdit, compact }: Props) {
   return (
     <div
       onClick={() => onOpen(task)}
-      className="group bg-white rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer p-4 space-y-3"
+      className="group bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all cursor-pointer p-4 space-y-3"
     >
       {/* Top row: priority + edit */}
       <div className="flex items-start justify-between gap-2">
@@ -43,7 +43,7 @@ export function TaskCard({ task, onOpen, onEdit, compact }: Props) {
         </div>
         <button
           onClick={e => { e.stopPropagation(); onEdit(task); }}
-          className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+          className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
         >
           <Edit2 className="h-3.5 w-3.5" />
         </button>
@@ -67,7 +67,7 @@ export function TaskCard({ task, onOpen, onEdit, compact }: Props) {
         <div className="space-y-1">
           <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-indigo-500 to-violet-400 rounded-full"
+              className="h-full bg-gradient-to-r from-emerald-500 to-violet-400 rounded-full"
               style={{ width: `${progress}%` }}
             />
           </div>

@@ -77,8 +77,8 @@ export function TaskModal({ task, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-50 rounded-lg">
-              <ClipboardList className="h-5 w-5 text-indigo-600" />
+            <div className="p-2 bg-emerald-50 rounded-lg">
+              <ClipboardList className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-slate-900">{isEdit ? 'Edit Task' : 'New Task'}</h2>
@@ -101,7 +101,7 @@ export function TaskModal({ task, onClose }: Props) {
               value={form.title}
               onChange={e => set('title', e.target.value)}
               placeholder="What needs to be done?"
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
           </div>
 
@@ -111,7 +111,7 @@ export function TaskModal({ task, onClose }: Props) {
             <select
               value={form.client_id}
               onChange={e => set('client_id', e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             >
               <option value="">-- None --</option>
               {(clients || []).map(c => (
@@ -128,7 +128,7 @@ export function TaskModal({ task, onClose }: Props) {
               value={form.description}
               onChange={e => set('description', e.target.value)}
               placeholder="Add more context..."
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition resize-none"
             />
           </div>
 
@@ -139,7 +139,7 @@ export function TaskModal({ task, onClose }: Props) {
               <select
                 value={form.status}
                 onChange={e => set('status', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
               >
                 {STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
               </select>
@@ -149,7 +149,7 @@ export function TaskModal({ task, onClose }: Props) {
               <select
                 value={form.priority}
                 onChange={e => set('priority', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
               >
                 {PRIORITIES.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
               </select>
@@ -164,7 +164,7 @@ export function TaskModal({ task, onClose }: Props) {
                 type="date"
                 value={form.start_date}
                 onChange={e => set('start_date', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
               />
             </div>
             <div>
@@ -174,7 +174,7 @@ export function TaskModal({ task, onClose }: Props) {
                 type="date"
                 value={form.due_date}
                 onChange={e => set('due_date', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
               />
             </div>
           </div>
@@ -183,13 +183,13 @@ export function TaskModal({ task, onClose }: Props) {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-sm font-medium text-slate-700">Progress</label>
-              <span className="text-sm font-semibold text-indigo-600">{form.progress}%</span>
+              <span className="text-sm font-semibold text-emerald-600">{form.progress}%</span>
             </div>
             <input
               type="range" min={0} max={100} step={5}
               value={form.progress}
               onChange={e => set('progress', Number(e.target.value))}
-              className="w-full accent-indigo-600"
+              className="w-full accent-emerald-600"
             />
           </div>
 
@@ -198,7 +198,7 @@ export function TaskModal({ task, onClose }: Props) {
             <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
               Cancel
             </button>
-            <button type="submit" className="flex-1 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all shadow-sm">
+            <button type="submit" className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-sm">
               {isEdit ? 'Save Changes' : 'Create Task'}
             </button>
           </div>

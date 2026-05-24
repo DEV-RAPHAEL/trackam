@@ -33,7 +33,7 @@ export function InvoiceViewModal({ invoiceId, onClose }: InvoiceViewModalProps) 
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-50 rounded-lg"><Download className="h-5 w-5 text-indigo-600" /></div>
+            <div className="p-2 bg-emerald-50 rounded-lg"><Download className="h-5 w-5 text-emerald-600" /></div>
             <div>
               <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Invoice Viewer</h2>
               <p className="text-[10px] text-slate-500 font-medium">INV-{invoiceId.substring(0, 6).toUpperCase()}</p>
@@ -91,7 +91,7 @@ export function InvoiceViewModal({ invoiceId, onClose }: InvoiceViewModalProps) 
             <div className="pt-4 space-y-3">
               <button 
                 onClick={() => useStore.getState().sendInvoice(invoice.id)}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-100"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-emerald-100"
               >
                 <Send className="h-4 w-4" />
                 Resend to Client

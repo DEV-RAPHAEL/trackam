@@ -37,11 +37,11 @@ export default function TasksPage() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Tasks</h1>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Tasks</h1>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             {totalDone}/{totalTasks} completed
             {totalTasks > 0 && (
-              <span className="ml-2 text-indigo-500 font-medium">
+              <span className="ml-2 text-emerald-500 dark:text-emerald-400 font-medium">
                 {Math.round((totalDone / totalTasks) * 100)}%
               </span>
             )}
@@ -50,7 +50,7 @@ export default function TasksPage() {
 
         <div className="flex items-center gap-3">
           {/* View switcher */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-1 gap-1">
+          <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-lg p-1 gap-1">
             {views.map(v => (
               <button
                 key={v.id}
@@ -58,8 +58,8 @@ export default function TasksPage() {
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all',
                   view === v.id
-                    ? 'bg-white text-slate-800 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white dark:bg-[#0d0d1a] text-slate-800 dark:text-white shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 )}
               >
                 {v.icon}
@@ -70,7 +70,7 @@ export default function TasksPage() {
 
           <button
             onClick={() => { setEditingTask(null); setIsModalOpen(true); }}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 active:scale-95 transition-all"
           >
             <Plus className="h-4 w-4" />
             New Task
@@ -80,9 +80,9 @@ export default function TasksPage() {
 
       {/* Progress bar */}
       {totalTasks > 0 && (
-        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden shrink-0">
+        <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shrink-0">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-700"
+            className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full transition-all duration-700"
             style={{ width: `${(totalDone / totalTasks) * 100}%` }}
           />
         </div>

@@ -11,7 +11,7 @@ const PRIORITY_STYLES: Record<string, string> = {
   high: 'bg-orange-50 text-orange-600', urgent: 'bg-red-50 text-red-600',
 };
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'bg-slate-100 text-slate-600', in_progress: 'bg-indigo-50 text-indigo-700',
+  todo: 'bg-slate-100 text-slate-600', in_progress: 'bg-emerald-50 text-emerald-700',
   review: 'bg-amber-50 text-amber-700', done: 'bg-emerald-50 text-emerald-700',
 };
 const STATUS_LABELS: Record<string, string> = {
@@ -59,7 +59,7 @@ export function ListView({ tasks, onOpen, onEdit }: Props) {
                       type="checkbox"
                       checked={task.status === 'done'}
                       onChange={() => updateTask(task.id, { status: task.status === 'done' ? 'todo' : 'done', progress: task.status === 'done' ? 0 : 100 })}
-                      className="w-4 h-4 rounded accent-indigo-600 cursor-pointer"
+                      className="w-4 h-4 rounded accent-emerald-600 cursor-pointer"
                     />
                   </td>
                   {/* Title */}
@@ -95,7 +95,7 @@ export function ListView({ tasks, onOpen, onEdit }: Props) {
                   <td className="px-5 py-3 w-32">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-400 rounded-full" style={{ width: `${progress}%` }} />
+                        <div className="h-full bg-gradient-to-r from-emerald-500 to-violet-400 rounded-full" style={{ width: `${progress}%` }} />
                       </div>
                       <span className="text-[10px] font-bold text-slate-400 w-8">{progress}%</span>
                     </div>
@@ -103,7 +103,7 @@ export function ListView({ tasks, onOpen, onEdit }: Props) {
                   {/* Actions */}
                   <td className="px-5 py-3 text-right" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => onEdit(task)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                      <button onClick={() => onEdit(task)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
                         <Edit2 className="h-3.5 w-3.5" />
                       </button>
                       <button onClick={() => deleteTask(task.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">

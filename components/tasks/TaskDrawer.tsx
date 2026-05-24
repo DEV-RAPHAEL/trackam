@@ -14,7 +14,7 @@ const PRIORITY_STYLES: Record<string, string> = {
 };
 const STATUS_STYLES: Record<string, string> = {
   todo:        'bg-slate-100 text-slate-600',
-  in_progress: 'bg-indigo-50 text-indigo-700',
+  in_progress: 'bg-emerald-50 text-emerald-700',
   review:      'bg-amber-50 text-amber-700',
   done:        'bg-emerald-50 text-emerald-700',
 };
@@ -66,7 +66,7 @@ export function TaskDrawer({ task, onClose, onEdit }: Props) {
             )}
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={onEdit} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+            <button onClick={onEdit} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
               <Edit2 className="h-4 w-4" />
             </button>
             <button onClick={handleDelete} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
@@ -111,11 +111,11 @@ export function TaskDrawer({ task, onClose, onEdit }: Props) {
                 <p className="text-xs font-semibold text-slate-500 flex items-center gap-1">
                   <BarChart2 className="h-3.5 w-3.5" /> Progress
                 </p>
-                <span className="text-sm font-bold text-indigo-600">{progress}%</span>
+                <span className="text-sm font-bold text-emerald-600">{progress}%</span>
               </div>
               <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -128,8 +128,8 @@ export function TaskDrawer({ task, onClose, onEdit }: Props) {
                     className={cn(
                       'flex-1 text-[10px] font-bold py-1 rounded-md transition-colors',
                       progress === p
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600'
                     )}
                   >
                     {p}%
@@ -158,7 +158,7 @@ export function TaskDrawer({ task, onClose, onEdit }: Props) {
                 )}
                 {(task.comments ?? []).map(c => (
                   <div key={c.id} className="flex gap-3">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-600">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-600">
                       {c.user_name.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 bg-slate-50 rounded-xl p-3">
@@ -182,12 +182,12 @@ export function TaskDrawer({ task, onClose, onEdit }: Props) {
             value={comment}
             onChange={e => setComment(e.target.value)}
             placeholder="Leave a comment..."
-            className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
           />
           <button
             type="submit"
             disabled={!comment.trim()}
-            className="p-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="p-2.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             <Send className="h-4 w-4" />
           </button>

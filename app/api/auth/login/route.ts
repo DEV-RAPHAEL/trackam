@@ -23,8 +23,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ user: saUser, company: { id: 'platform', name: 'Platform Admin', subdomain: 'platform', status: 'active', onboarding_step: 'done' }, token });
     }
 
-    let user = null;
-    let comp = null;
+    let user: any = null;
+    let comp: any = null;
     
     if (subdomain) {
       // Find the user for the specific subdomain

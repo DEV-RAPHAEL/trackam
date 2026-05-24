@@ -24,13 +24,6 @@ export async function POST(req: Request) {
     const keys = Object.keys(body);
     const values = Object.values(body);
     const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
-    
-    // Convert items array/object to string for invoices to match sqlite/pglite limitations
-    if (table_name === 'invoices' && body.items && typeof body.items !== 'string') {
-      const idx = keys.indexOf('items');
-      values[idx] = JSON.stringify(values[idx]);
-    }
-
     await db.query(`INSERT INTO ${table_name} (${keys.join(', ')}) VALUES (${placeholders})`, values);
     
     return NextResponse.json({ success: true });

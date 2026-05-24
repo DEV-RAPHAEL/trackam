@@ -37,7 +37,7 @@ export async function verifyAuth(req: Request): Promise<{ user: AuthUser | null;
 export async function verifyOwnership(table: string, id: string, companyId: string): Promise<boolean> {
   try {
     const result = await db.query(`SELECT company_id FROM ${table} WHERE id = $1`, [id]);
-    return result.rows.length > 0 && result.rows[0].company_id === companyId;
+    return result.rows.length > 0 && (result.rows[0] as any).company_id === companyId;
   } catch (e) {
     console.error(`Ownership check failed for ${table}:${id}`, e);
     return false;

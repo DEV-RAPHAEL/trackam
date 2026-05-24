@@ -1,4 +1,4 @@
-export type Role = 'owner' | 'admin' | 'user';
+export type Role = 'owner' | 'admin' | 'user' | 'superadmin';
 
 export type User = {
   id: string;
@@ -40,6 +40,7 @@ export type Client = {
   phone: string;
   company: string;
   status: ClientStatus;
+  address?: string;
   created_at: string;
 };
 
@@ -78,6 +79,7 @@ export type Deal = {
   title: string;
   stage: DealStage;
   value: number;
+  lead_id?: string;
   created_at: string;
 };
 

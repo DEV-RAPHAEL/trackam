@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 const COLUMNS: { id: TaskStatus; label: string; color: string; dot: string }[] = [
   { id: 'todo',        label: 'To Do',       color: 'bg-slate-100',   dot: 'bg-slate-400' },
-  { id: 'in_progress', label: 'In Progress', color: 'bg-indigo-50',   dot: 'bg-indigo-500' },
+  { id: 'in_progress', label: 'In Progress', color: 'bg-emerald-50',   dot: 'bg-emerald-500' },
   { id: 'review',      label: 'In Review',   color: 'bg-amber-50',    dot: 'bg-amber-500' },
   { id: 'done',        label: 'Done',        color: 'bg-emerald-50',  dot: 'bg-emerald-500' },
 ];

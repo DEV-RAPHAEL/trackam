@@ -17,15 +17,15 @@ export function ToastContainer() {
             "pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border min-w-[280px] animate-in slide-in-from-right-full duration-300",
             toast.type === 'success' && "bg-emerald-50 border-emerald-100 text-emerald-800",
             toast.type === 'error' && "bg-red-50 border-red-100 text-red-800",
-            toast.type === 'info' && "bg-indigo-50 border-indigo-100 text-indigo-800",
+            toast.type === 'info' && "bg-emerald-50 border-emerald-100 text-emerald-800",
             toast.type === 'loading' && "bg-white border-slate-200 text-slate-800"
           )}
         >
           <div className="shrink-0">
             {toast.type === 'success' && <CheckCircle className="h-5 w-5 text-emerald-500" />}
             {toast.type === 'error' && <AlertCircle className="h-5 w-5 text-red-500" />}
-            {toast.type === 'info' && <Info className="h-5 w-5 text-indigo-500" />}
-            {toast.type === 'loading' && <Loader2 className="h-5 w-5 text-indigo-500 animate-spin" />}
+            {toast.type === 'info' && <Info className="h-5 w-5 text-emerald-500" />}
+            {toast.type === 'loading' && <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />}
           </div>
           <p className="text-sm font-semibold flex-1">{toast.message}</p>
           {toast.type !== 'loading' && (

@@ -119,7 +119,7 @@ export default function Onboarding() {
         company_id: compId,
         assigned_to: currentUser?.id || '',
         title: recordData.taskTitle,
-        status: 'pending',
+        status: 'todo',
         due_date: new Date(Date.now() + 86400000).toISOString()
       });
     }

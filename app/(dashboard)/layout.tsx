@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { useStore } from '@/lib/store';
-import { Zap, Menu, X, Loader2 } from 'lucide-react';
+import { Zap, Menu, X, Loader2, Sun, Moon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({
@@ -16,6 +16,8 @@ export default function DashboardLayout({
   const isAuthenticated = useStore(state => state.isAuthenticated);
   const loginWithToken = useStore(state => state.loginWithToken);
   const logout = useStore(state => state.logout);
+  const theme = useStore(state => state.theme);
+  const setTheme = useStore(state => state.setTheme);
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCheckingToken, setIsCheckingToken] = useState(true);
@@ -90,8 +92,8 @@ export default function DashboardLayout({
 
   if (isCheckingToken || !isAuthenticated || needsOnboarding) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-[#09090f]' : 'bg-slate-50'}`}>
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
       </div>
     );
   }
@@ -101,7 +103,7 @@ export default function DashboardLayout({
     : 0;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
+    <div className={`flex h-screen overflow-hidden font-sans transition-colors duration-500 ${theme === 'dark' ? 'dark bg-[#09090f] text-white' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-[220px] md:flex-col md:fixed md:inset-y-0 z-10">
@@ -126,9 +128,9 @@ export default function DashboardLayout({
         </div>
       )}
 
-      <main className="flex-1 flex flex-col md:pl-[220px] overflow-hidden w-full">
+      <main className="flex-1 flex flex-col md:pl-[220px] overflow-hidden w-full relative z-0">
         {currentCompany?.subscription_status === 'trialing' && (
-          <div className="bg-indigo-600 text-white px-4 py-2 flex items-center justify-center gap-3 text-sm font-medium shadow-lg z-20">
+          <div className="bg-emerald-600 text-white px-4 py-2 flex items-center justify-center gap-3 text-sm font-medium shadow-lg z-20">
             <Zap className="h-4 w-4 fill-white animate-pulse shrink-0" />
             <span className="truncate">14-day free trial. {trialDaysLeft} days remaining.</span>
             <button className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors text-xs border border-white/30 shrink-0">
@@ -136,19 +138,37 @@ export default function DashboardLayout({
             </button>
           </div>
         )}
-        <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0 relative z-10">
+        <header className={`h-[64px] border-b flex items-center justify-between px-4 sm:px-8 shrink-0 relative z-10 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0d0d1a] border-white/5' : 'bg-white border-slate-200'}`}>
           <div className="flex items-center gap-3">
             <button 
-              className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-md transition-colors"
+              className={`md:hidden p-2 -ml-2 rounded-md transition-colors ${theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-500 hover:bg-slate-100'}`}
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-bold text-slate-800 hidden sm:block">Command Center</h1>
+            <h1 className={`text-lg font-bold hidden sm:block transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>Command Center</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`relative flex items-center justify-between w-14 h-7 rounded-full p-1 cursor-pointer transition-all duration-300 border overflow-hidden shadow-inner ${theme === 'dark' ? 'border-emerald-500/20 bg-slate-950/40' : 'border-emerald-600/20 bg-slate-200/40'}`}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              <Moon className={`w-3.5 h-3.5 z-10 transition-all duration-300 ${theme === 'dark' ? 'text-emerald-400 opacity-100 scale-100' : 'text-slate-400 opacity-40 scale-90'} ml-0.5`} />
+              <Sun className={`w-3.5 h-3.5 z-10 transition-all duration-300 ${theme === 'light' ? 'text-amber-500 opacity-100 scale-100' : 'text-slate-400 opacity-40 scale-90'} mr-0.5`} />
+              <div
+                className="absolute top-0.5 w-6 h-6 rounded-full transition-all duration-300 ease-out flex items-center justify-center shadow-md"
+                style={{
+                  left: theme === 'dark' ? '2px' : 'calc(100% - 26px)',
+                  background: 'linear-gradient(to right, #059669 33%, #ffffff 33%, #ffffff 67%, #059669 67%)',
+                  border: theme === 'dark' ? '1.5px solid #10b981' : '1.5px solid #059669'
+                }}
+              />
+            </button>
+            
             <div className="relative hidden xs:block">
-              <input type="text" placeholder="Search..." className="w-40 sm:w-64 pl-9 pr-4 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+              <input type="text" placeholder="Search..." className={`w-40 sm:w-64 pl-9 pr-4 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white placeholder-white/30' : 'bg-slate-100 border-slate-200 text-slate-900'}`} />
               <svg className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
             <NotificationsDropdown />

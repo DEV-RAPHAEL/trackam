@@ -20,7 +20,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     `, [id]);
 
     if (invResult.rows.length === 0) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
-    const inv = invResult.rows[0];
+    const inv = invResult.rows[0] as any;
 
     // Security: Ensure requester belongs to same company
     if (user?.company_id !== inv.company_id && user?.role !== 'superadmin') {

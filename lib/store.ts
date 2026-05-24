@@ -27,7 +27,9 @@ interface AppState {
   analytics: any | null;
   team: User[];
   invoiceDraft: any | null;
+  theme: 'light' | 'dark';
 
+  setTheme: (theme: 'light' | 'dark') => void;
   setInvoiceDraft: (draft: any | null) => void;
   addToast: (message: string, type?: ToastType) => string;
   removeToast: (id: string) => void;
@@ -118,7 +120,9 @@ export const useStore = create<AppState>()(
       analytics: null,
       team: [],
       invoiceDraft: null,
+      theme: 'dark',
 
+      setTheme: (theme) => set({ theme }),
       setInvoiceDraft: (draft) => set({ invoiceDraft: draft }),
 
       addToast: (message, type = 'info') => {

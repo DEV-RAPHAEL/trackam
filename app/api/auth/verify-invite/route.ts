@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     
-    const user = userResult.rows[0];
+    const user = userResult.rows[0] as any;
     const companyResult = await db.query('SELECT * FROM companies WHERE id = $1', [user.company_id]);
 
     const newToken = jwt.sign({ id: user.id, company_id: user.company_id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });

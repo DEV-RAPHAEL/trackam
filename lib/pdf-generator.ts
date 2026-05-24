@@ -24,7 +24,8 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       // Metadata Block
       const startY = 130;
       doc.fillColor('#64748b').fontSize(10).text('BILLED TO:', 50, startY);
-      doc.fillColor('#0f172a').fontSize(12).text(invoice.client_name, 50, startY + 15, { bold: true });
+      doc.fillColor('#0f172a').fontSize(12).font('Helvetica-Bold').text(invoice.client_name, 50, startY + 15);
+      doc.font('Helvetica');
       doc.fillColor('#475569').fontSize(10).text(invoice.client_email, 50, startY + 32);
 
       doc.fillColor('#64748b').fontSize(10).text('INVOICE DATE:', 400, startY, { align: 'right' });
@@ -70,7 +71,8 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       const totalBoxY = currentY + 30;
       doc.rect(342, totalBoxY, 220, 45).fill('#4f46e5');
       doc.fillColor('#ffffff').fontSize(10).text('TOTAL AMOUNT DUE', 357, totalBoxY + 10);
-      doc.fontSize(16).text(`N${Number(invoice.amount).toLocaleString()}`, 357, totalBoxY + 22, { bold: true });
+      doc.fontSize(16).font('Helvetica-Bold').text(`N${Number(invoice.amount).toLocaleString()}`, 357, totalBoxY + 22);
+      doc.font('Helvetica');
 
       // Thank you / powered by
       doc.fillColor('#94a3b8').fontSize(9).text('Thank you for your business!', 50, totalBoxY + 20);

@@ -32,7 +32,7 @@ export default function DashboardPage() {
     { name: 'Win Rate', value: `${winRate}%`, icon: Trophy, color: 'text-purple-600' },
     { name: 'Active Deals', value: activeDeals.length.toString(), icon: Briefcase, color: 'text-blue-600' },
     { name: 'Outstanding', value: formatCurrency(calculatedUnpaid), icon: AlertCircle, color: 'text-amber-600' },
-    { name: 'Total Tasks', value: (tasks || []).length.toString(), icon: CheckSquare, color: 'text-indigo-600' },
+    { name: 'Total Tasks', value: (tasks || []).length.toString(), icon: CheckSquare, color: 'text-emerald-600' },
   ];
 
   const COLORS = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444'];
@@ -60,7 +60,7 @@ export default function DashboardPage() {
         <div className="mb-2">
           <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
             {/* Background decorations */}
-            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-10 pointer-events-none"></div>
             
             <div className="relative z-10">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                   <button onClick={() => router.push('/settings')} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-sm font-bold transition-all shadow-sm">
                     <Users className="w-4 h-4" /> Manage Team
                   </button>
-                  <button onClick={() => router.push('/settings')} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/30">
+                  <button onClick={() => router.push('/settings')} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-500/30">
                     <Settings className="w-4 h-4" /> System Settings
                   </button>
                 </div>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Unlocked</div>
                     </div>
-                    <button onClick={() => router.push('/modules')} className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+                    <button onClick={() => router.push('/modules')} className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
                       View all <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
         {stats.map((stat) => (
-          <div key={stat.name} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div key={stat.name} className="bg-white dark:bg-[#0d0d1a] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-lg bg-slate-50 ${stat.color}`}>
                 <stat.icon className="h-5 w-5" />
@@ -163,19 +163,19 @@ export default function DashboardPage() {
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live</span>
               </div>
             </div>
-            <div className="text-slate-500 text-xs font-semibold">{stat.name}</div>
-            <div className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</div>
+            <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold">{stat.name}</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.value}</div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Chart */}
-        <div className="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="lg:col-span-8 bg-white dark:bg-[#0d0d1a] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-sm font-bold text-slate-800">Revenue Growth</h3>
-              <p className="text-xs text-slate-500">6-month trend of paid invoices</p>
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">Revenue Growth</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">6-month trend of paid invoices</p>
             </div>
           </div>
           <div className="h-[300px] w-full">
@@ -206,8 +206,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Pipeline Health */}
-        <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-800 mb-6">Pipeline Health</h3>
+        <div className="lg:col-span-4 bg-white dark:bg-[#0d0d1a] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-6">Pipeline Health</h3>
           <div className="h-[300px] w-full">
             {dealDistributionData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -240,29 +240,29 @@ export default function DashboardPage() {
 
       {/* 👑 Owner Only: Activity Feed */}
       {currentUser?.role === 'owner' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-6">
+        <div className="bg-white dark:bg-[#0d0d1a] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm mt-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <Activity className="w-4 h-4 text-indigo-500" /> Global Audit Trail
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-500" /> Global Audit Trail
               </h3>
-              <p className="text-xs text-slate-500">Real-time activity log of all team actions</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Real-time activity log of all team actions</p>
             </div>
-            <button className="text-xs font-bold text-indigo-600 hover:text-indigo-500 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">
+            <button className="text-xs font-bold text-emerald-600 hover:text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1.5 rounded-lg transition-colors">
               Export Log
             </button>
           </div>
           <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
             {(activityLogs || []).slice(0, 15).map((log, i) => (
-              <div key={i} className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 shrink-0 font-bold text-xs">
+              <div key={i} className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-white/10">
+                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0 font-bold text-xs">
                   {log.user_id ? 'U' : <Activity className="w-4 h-4" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-slate-800">{log.action}</p>
-                  <p className="text-xs text-slate-500 truncate">{log.description}</p>
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{log.action}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{log.description}</p>
                 </div>
-                <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded">
+                <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded">
                   {formatDateTime(log.created_at)}
                 </div>
               </div>
