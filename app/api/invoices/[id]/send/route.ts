@@ -13,7 +13,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     
     const invResult = await db.query(`
       SELECT i.*, c.name as client_name, c.email as client_email, 
-             comp.name as company_name, comp.bank_name, comp.account_name, comp.account_number 
+             comp.name as company_name, comp.bank_name, comp.account_name, comp.account_number, comp.brand_color as brand_color
       FROM invoices i 
       JOIN clients c ON i.client_id = c.id 
       JOIN companies comp ON i.company_id = comp.id 
@@ -79,7 +79,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
       return NextResponse.json({ success: true });
     } else {
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Failed to send email', 
+        details: emailSent.error 
+      }, { status: 500 });
     }
   } catch(e: any) {
     console.error(`API Error [POST invoices/${id}/send]:`, e);

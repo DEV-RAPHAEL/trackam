@@ -133,7 +133,7 @@ export default function DashboardLayout({
         </div>
       )}
 
-      <main className="flex-1 flex flex-col md:pl-[220px] overflow-hidden w-full relative z-0">
+      <main className="flex-1 flex flex-col md:pl-[220px] overflow-hidden w-full relative">
         {currentCompany?.subscription_status === 'trialing' && (
           <div className="bg-emerald-600 text-white px-4 py-2 flex items-center justify-center gap-3 text-sm font-medium shadow-lg z-20">
             <Zap className="h-4 w-4 fill-white animate-pulse shrink-0" />
@@ -193,7 +193,7 @@ export default function DashboardLayout({
             <NotificationsDropdown />
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto w-full relative z-0">
+        <div className="flex-1 overflow-y-auto w-full relative">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 w-full">
             {children}
           </div>

@@ -31,6 +31,26 @@ export default function SettingsPage() {
     account_number: currentCompany?.account_number || '',
   });
 
+  // Keep settings form state reactive and synced with store changes (like when bank details are configured from the invoices page)
+  useEffect(() => {
+    if (currentCompany) {
+      setForm(prev => ({
+        ...prev,
+        name: currentCompany.name || '',
+        email: currentCompany.email || '',
+        phone: currentCompany.phone || '',
+        website: currentCompany.website || '',
+        address: currentCompany.address || '',
+        brand_color: currentCompany.brand_color || '#4f46e5',
+        logo: currentCompany.logo || '',
+        subdomain: currentCompany.subdomain || '',
+        bank_name: currentCompany.bank_name || '',
+        account_name: currentCompany.account_name || '',
+        account_number: currentCompany.account_number || '',
+      }));
+    }
+  }, [currentCompany]);
+
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {

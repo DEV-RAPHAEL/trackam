@@ -57,16 +57,16 @@ interface AppState {
   addTaskComment: (taskId: string, body: string) => void;
 
   addInvoice: (invoice: Omit<Invoice, 'id' | 'created_at'>) => void;
-  updateInvoice: (id: string, data: Partial<Invoice>) => void;
-  deleteInvoice: (id: string) => void;
+  updateInvoice: (id: string, data: Partial<Invoice>) => Promise<boolean>;
+  deleteInvoice: (id: string) => Promise<boolean>;
 
   addInvoiceTemplate: (template: Omit<InvoiceTemplate, 'id'>) => void;
   updateInvoiceTemplate: (id: string, data: Partial<InvoiceTemplate>) => void;
 
   updateCompanyBranding: (data: Partial<Company>) => void;
 
-  sendInvoice: (id: string) => void;
-  sendFollowUp: (id: string) => void;
+  sendInvoice: (id: string) => Promise<boolean>;
+  sendFollowUp: (id: string) => Promise<boolean>;
 
   logActivity: (action: string, description: string) => void;
   unlockModule: (moduleId: string) => void;
@@ -353,24 +353,50 @@ export const useStore = create<AppState>()(
         return { invoices: [...state.invoices, newInvoice] };
       }),
 
-      updateInvoice: (id, data) => set((state) => {
-        get().authFetch(`${API_URL}/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(data) }).catch(console.error);
-        get().addToast('Invoice updated', 'info');
-        if (data.status === 'paid') {
-          const inv = state.invoices.find(i => i.id === id);
-          if (inv?.client_id) {
-            get().updateClient(inv.client_id, { status: 'active' });
-            setTimeout(() => get().addToast('Client automatically set to Active!', 'success'), 800);
+      updateInvoice: async (id, data) => {
+        try {
+          const res = await get().authFetch(`${API_URL}/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+          if (res.ok) {
+            get().addToast('Invoice updated ✓', 'info');
+            set((state) => {
+              if (data.status === 'paid') {
+                const inv = state.invoices.find(i => i.id === id);
+                if (inv?.client_id) {
+                  get().updateClient(inv.client_id, { status: 'active' });
+                  setTimeout(() => get().addToast('Client automatically set to Active!', 'success'), 800);
+                }
+              }
+              return { invoices: state.invoices.map(i => i.id === id ? { ...i, ...data } : i) };
+            });
+            return true;
+          } else {
+            get().addToast('Failed to update invoice', 'error');
+            return false;
           }
+        } catch (err) {
+          console.error(err);
+          get().addToast('Error updating invoice', 'error');
+          return false;
         }
-        return { invoices: state.invoices.map(i => i.id === id ? { ...i, ...data } : i) };
-      }),
+      },
 
-      deleteInvoice: (id) => set((state) => {
-        get().authFetch(`${API_URL}/api/invoices/${id}`, { method: 'DELETE' }).catch(console.error);
-        get().addToast('Invoice deleted', 'info');
-        return { invoices: state.invoices.filter(i => i.id !== id) };
-      }),
+      deleteInvoice: async (id) => {
+        try {
+          const res = await get().authFetch(`${API_URL}/api/invoices/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            get().addToast('Invoice deleted ✓', 'info');
+            set((state) => ({ invoices: state.invoices.filter(i => i.id !== id) }));
+            return true;
+          } else {
+            get().addToast('Failed to delete invoice', 'error');
+            return false;
+          }
+        } catch (err) {
+          console.error(err);
+          get().addToast('Error deleting invoice', 'error');
+          return false;
+        }
+      },
 
       addInvoiceTemplate: (data) => set((state) => {
         const newTemplate = { ...data, id: uuidv4() };
@@ -401,13 +427,17 @@ export const useStore = create<AppState>()(
                 i.id === id ? { ...i, is_sent: true, last_sent_at: new Date().toISOString() } : i
               ),
             }));
+            return true;
           } else {
             const err = await res.json().catch(() => ({}));
-            get().addToast(err.error || 'Failed to send invoice email', 'error');
+            const errMsg = err.details?.message || err.error || 'Failed to send invoice email';
+            get().addToast(errMsg, 'error');
+            return false;
           }
         } catch {
           get().removeToast(toastId);
           get().addToast('Error sending email', 'error');
+          return false;
         }
       },
 
@@ -418,12 +448,17 @@ export const useStore = create<AppState>()(
           get().removeToast(toastId);
           if (res.ok) {
             get().addToast('Follow-up reminder sent ✓', 'success');
+            return true;
           } else {
-            get().addToast('Failed to send reminder', 'error');
+            const err = await res.json().catch(() => ({}));
+            const errMsg = err.details?.message || err.error || 'Failed to send reminder';
+            get().addToast(errMsg, 'error');
+            return false;
           }
         } catch {
           get().removeToast(toastId);
           get().addToast('Error sending reminder', 'error');
+          return false;
         }
       },
 

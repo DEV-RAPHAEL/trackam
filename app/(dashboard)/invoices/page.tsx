@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
-import { Plus, CheckCircle, Clock, Trash2, X, FileText, AlertCircle, Eye, Settings, Palette, Send, Bell, MailCheck } from 'lucide-react';
+import { Plus, CheckCircle, Clock, Trash2, X, FileText, AlertCircle, Eye, Settings, Palette, Send, Bell, MailCheck, Loader2 } from 'lucide-react';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { InvoiceStatus, InvoiceItem, InvoiceTemplate } from '@/types';
 import { InvoiceViewModal } from '@/components/invoices/InvoiceViewModal';
@@ -15,6 +15,12 @@ export default function InvoicesPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [viewingInvoiceId, setViewingInvoiceId] = useState<string | null>(null);
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  
+  // Action loading states
+  const [sendingInvoiceId, setSendingInvoiceId] = useState<string | null>(null);
+  const [sendingFollowUpId, setSendingFollowUpId] = useState<string | null>(null);
+  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
+  const [deletingInvoiceId, setDeletingInvoiceId] = useState<string | null>(null);
   
   const [newInvoice, setNewInvoice] = useState({
     client_id: '',
@@ -102,8 +108,33 @@ export default function InvoicesPage() {
     });
   };
 
-  const markPaid = (id: string) => updateInvoice(id, { status: 'paid' });
   const { sendInvoice, sendFollowUp } = useStore();
+
+  const handleSendInvoice = async (id: string) => {
+    setSendingInvoiceId(id);
+    await sendInvoice(id);
+    setSendingInvoiceId(null);
+  };
+
+  const handleSendFollowUp = async (id: string) => {
+    setSendingFollowUpId(id);
+    await sendFollowUp(id);
+    setSendingFollowUpId(null);
+  };
+
+  const handleMarkPaid = async (id: string) => {
+    setMarkingPaidId(id);
+    await updateInvoice(id, { status: 'paid' });
+    setMarkingPaidId(null);
+  };
+
+  const handleDeleteInvoice = async (id: string) => {
+    if (confirm("Are you sure you want to delete this invoice?")) {
+      setDeletingInvoiceId(id);
+      await deleteInvoice(id);
+      setDeletingInvoiceId(null);
+    }
+  };
 
   const totalUnpaid = (invoices || []).filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
   const totalPaid   = (invoices || []).filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
@@ -239,29 +270,59 @@ export default function InvoicesPage() {
 
                         {!invoice.is_sent ? (
                           <button 
-                            onClick={() => sendInvoice(invoice.id)}
-                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all"
+                            disabled={sendingInvoiceId === invoice.id}
+                            onClick={() => handleSendInvoice(invoice.id)}
+                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Send to client"
                           >
-                            <Send className="h-4 w-4" />
+                            {sendingInvoiceId === invoice.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin text-emerald-600 dark:text-emerald-400" />
+                            ) : (
+                              <Send className="h-4 w-4" />
+                            )}
                           </button>
                         ) : invoice.status === 'unpaid' && (
                           <button 
-                            onClick={() => sendFollowUp(invoice.id)}
-                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all"
+                            disabled={sendingFollowUpId === invoice.id}
+                            onClick={() => handleSendFollowUp(invoice.id)}
+                            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Send payment reminder"
                           >
-                            <Bell className="h-4 w-4" />
+                            {sendingFollowUpId === invoice.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+                            ) : (
+                              <Bell className="h-4 w-4" />
+                            )}
                           </button>
                         )}
                         
                         {invoice.status === 'unpaid' && (
-                          <button onClick={() => markPaid(invoice.id)} className="ml-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 uppercase tracking-wide transition-colors">
-                            Mark Paid
+                          <button 
+                            disabled={markingPaidId === invoice.id}
+                            onClick={() => handleMarkPaid(invoice.id)} 
+                            className="ml-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 uppercase tracking-wide transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+                          >
+                            {markingPaidId === invoice.id ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                <span>Marking...</span>
+                              </>
+                            ) : (
+                              <span>Mark Paid</span>
+                            )}
                           </button>
                         )}
-                        <button onClick={() => deleteInvoice(invoice.id)} className="ml-2 p-2 rounded-lg text-slate-350 dark:text-slate-650 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all">
-                          <Trash2 className="w-4 h-4" />
+                        <button 
+                          disabled={deletingInvoiceId === invoice.id}
+                          onClick={() => handleDeleteInvoice(invoice.id)} 
+                          className="ml-2 p-2 rounded-lg text-slate-350 dark:text-slate-650 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete invoice"
+                        >
+                          {deletingInvoiceId === invoice.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-red-500" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
                         </button>
                       </div>
                     </td>

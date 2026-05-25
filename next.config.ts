@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   // Exclude heavy server-only packages from being bundled client-side
-  serverExternalPackages: ['@electric-sql/pglite', 'pg', 'bcryptjs', 'better-sqlite3'],
+  serverExternalPackages: ['@electric-sql/pglite', 'pg', 'bcryptjs', 'better-sqlite3', 'pdfkit'],
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
   },

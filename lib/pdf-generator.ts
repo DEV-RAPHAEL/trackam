@@ -10,8 +10,9 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', err => reject(err));
 
-      // Header Banner color block (Indigo)
-      doc.rect(0, 0, 612, 100).fill('#4f46e5');
+      // Header Banner color block (Dynamic Brand Color or Indigo fallback)
+      const brandColor = invoice.brand_color || '#4f46e5';
+      doc.rect(0, 0, 612, 100).fill(brandColor);
 
       // Company Title & Brand
       doc.fillColor('#ffffff').fontSize(24).text(String(invoice.company_name).toUpperCase(), 50, 35, { characterSpacing: 1 });
@@ -45,9 +46,12 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       // Render items
       let items = [];
       try {
-        items = JSON.parse(invoice.items || '[]');
+        items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
       } catch (e) {
-        items = [{ description: 'Project Services', qty: 1, price: invoice.amount }];
+        items = [];
+      }
+      if (!Array.isArray(items) || items.length === 0) {
+        items = [{ description: 'Project Services', quantity: 1, rate: invoice.amount, amount: invoice.amount }];
       }
 
       let currentY = tableHeaderY + 25;
@@ -57,10 +61,15 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
           doc.rect(50, currentY, 512, 25).fill('#f8fafc');
         }
         
-        doc.fillColor('#0f172a').fontSize(10).text(item.description, 65, currentY + 8);
-        doc.text(String(item.qty), 330, currentY + 8, { align: 'right', width: 40 });
-        doc.text(`N${Number(item.price).toLocaleString()}`, 390, currentY + 8, { align: 'right', width: 70 });
-        doc.text(`N${(item.qty * item.price).toLocaleString()}`, 480, currentY + 8, { align: 'right', width: 70 });
+        const desc = item.description || 'Project Services';
+        const qty = Number(item.quantity !== undefined ? item.quantity : (item.qty !== undefined ? item.qty : 1));
+        const rate = Number(item.rate !== undefined ? item.rate : (item.price !== undefined ? item.price : 0));
+        const amt = Number(item.amount !== undefined ? item.amount : (qty * rate));
+
+        doc.fillColor('#0f172a').fontSize(10).text(desc, 65, currentY + 8);
+        doc.text(String(qty), 330, currentY + 8, { align: 'right', width: 40 });
+        doc.text(`₦${rate.toLocaleString()}`, 390, currentY + 8, { align: 'right', width: 70 });
+        doc.text(`₦${amt.toLocaleString()}`, 480, currentY + 8, { align: 'right', width: 70 });
         currentY += 25;
       });
 
@@ -77,6 +86,28 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       // Thank you / powered by
       doc.fillColor('#94a3b8').fontSize(9).text('Thank you for your business!', 50, totalBoxY + 20);
       doc.text('Powered by Trackam CRM', 50, totalBoxY + 35);
+
+      // Bank Details block at the bottom
+      if (invoice.bank_name || invoice.account_name || invoice.account_number) {
+        const bankY = totalBoxY + 60;
+        doc.fillColor('#f8fafc').rect(50, bankY, 512, 45).fill();
+        doc.strokeColor('#e2e8f0').rect(50, bankY, 512, 45).stroke();
+        
+        doc.fillColor('#475569').fontSize(8).font('Helvetica-Bold').text('OFFLINE DIRECT BANK TRANSFER DETAILS', 65, bankY + 10);
+        doc.font('Helvetica').fontSize(8).fillColor('#334155');
+        
+        let bankText = '';
+        if (invoice.bank_name) bankText += `Bank: ${invoice.bank_name}   |   `;
+        if (invoice.account_name) bankText += `Account Name: ${invoice.account_name}   |   `;
+        if (invoice.account_number) bankText += `Account Number: ${invoice.account_number}`;
+        
+        // Remove trailing divider
+        if (bankText.endsWith('   |   ')) {
+          bankText = bankText.slice(0, -7);
+        }
+        
+        doc.text(bankText, 65, bankY + 24);
+      }
 
       doc.end();
     } catch (err) {
