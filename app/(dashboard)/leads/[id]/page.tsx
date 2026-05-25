@@ -69,6 +69,15 @@ export default function LeadProfilePage() {
     if (!newActivityContent.trim()) return;
     setIsSubmittingActivity(true);
     await addLeadActivity(id, newActivityContent);
+    
+    // Automatic contacted and follow-up updates!
+    const todayStr = new Date().toISOString().split('T')[0];
+    updateLead(id, {
+      stage: 'Contacted',
+      last_contact_date: todayStr,
+      next_followup_date: lead?.next_followup_date ? lead.next_followup_date.split('T')[0] : todayStr
+    });
+
     setNewActivityContent('');
     setIsSubmittingActivity(false);
   };
@@ -285,7 +294,24 @@ export default function LeadProfilePage() {
 
                 <div className="col-span-2">
                   <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Current Stage</label>
-                  <select value={editForm.stage} onChange={e => setEditForm({...editForm, stage: e.target.value as LeadStage})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                  <select 
+                    value={editForm.stage} 
+                    onChange={e => {
+                      const newStage = e.target.value as LeadStage;
+                      const updates: any = { stage: newStage };
+                      if (newStage === 'Contacted') {
+                        const todayStr = new Date().toISOString().split('T')[0];
+                        if (!editForm.last_contact_date) {
+                          updates.last_contact_date = todayStr;
+                        }
+                        if (!editForm.next_followup_date) {
+                          updates.next_followup_date = todayStr;
+                        }
+                      }
+                      setEditForm({...editForm, ...updates});
+                    }} 
+                    className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                  >
                     <option value="New" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200">New</option>
                     <option value="Contacted" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200">Contacted</option>
                     <option value="Qualified" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200">Qualified</option>

@@ -28,6 +28,8 @@ interface AppState {
   team: User[];
   invoiceDraft: any | null;
   theme: 'light' | 'dark';
+  pendingOtpEmail: string | null;
+
 
   setTheme: (theme: 'light' | 'dark') => void;
   setInvoiceDraft: (draft: any | null) => void;
@@ -69,8 +71,10 @@ interface AppState {
   logActivity: (action: string, description: string) => void;
   unlockModule: (moduleId: string) => void;
 
-  login: (email?: string, password?: string, subdomain?: string | null) => Promise<void>;
+  login: (email?: string, password?: string, subdomain?: string | null) => Promise<{ requiresOtp?: boolean; email?: string } | void>;
+  verifyLoginOtp: (email: string, code: string) => Promise<void>;
   logout: () => void;
+
   registerCompany: (companyName: string, userName: string, email: string, password?: string) => Promise<{ success: boolean; subdomain?: string }>;
   loginWithToken: (token: string) => Promise<boolean>;
   updateCompanyOnboarding: (updates: Partial<Company>) => void;
@@ -121,6 +125,7 @@ export const useStore = create<AppState>()(
       team: [],
       invoiceDraft: null,
       theme: 'dark',
+      pendingOtpEmail: null,
 
       setTheme: (theme) => set({ theme }),
       setInvoiceDraft: (draft) => set({ invoiceDraft: draft }),
@@ -447,17 +452,48 @@ export const useStore = create<AppState>()(
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, subdomain }),
           });
-          if (res.ok) {
-            const { user, company, token } = await res.json();
-            set({ isAuthenticated: true, currentUser: user, currentCompany: company || null, token });
-            if (company?.id) {
-              get().fetchInitialData(company.id);
-            }
-          } else {
-            get().addToast('Invalid credentials', 'error');
+          const data = await res.json();
+          if (!res.ok) {
+            const msg = res.status === 429 ? data.error : (data.error || 'Invalid credentials');
+            get().addToast(msg, 'error');
+            return;
           }
+          if (data.requiresOtp) {
+            // Password valid — OTP sent, redirect to verify-otp page
+            // Clear any stale authenticated session first to prevent premature redirects
+            set({
+              pendingOtpEmail: data.email,
+              isAuthenticated: false,
+              currentUser: null,
+              currentCompany: null,
+              token: null,
+            });
+            return { requiresOtp: true, email: data.email };
+          }
+
+          // Legacy / direct login path (should not occur with OTP enabled)
+          set({ isAuthenticated: true, currentUser: data.user, currentCompany: data.company || null, token: data.token, pendingOtpEmail: null });
+          if (data.company?.id) get().fetchInitialData(data.company.id);
         } catch (e) { console.error(e); }
       },
+
+      verifyLoginOtp: async (email, code) => {
+        try {
+          const res = await fetch(API_URL + '/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code, type: 'login_otp' }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            get().addToast(data.error || 'Invalid or expired code', 'error');
+            return;
+          }
+          set({ isAuthenticated: true, currentUser: data.user, currentCompany: data.company || null, token: data.token, pendingOtpEmail: null });
+          if (data.company?.id) get().fetchInitialData(data.company.id);
+        } catch (e) { console.error(e); }
+      },
+
 
       logout: () => set({
         isAuthenticated: false, currentUser: null, currentCompany: null,

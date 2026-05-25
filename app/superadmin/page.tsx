@@ -109,7 +109,11 @@ export default function SuperAdminPage() {
     setLoginError('');
     setLoggingIn(true);
     try {
-      await login(email, password, null);
+      const result = await login(email, password, null);
+      if (result && result.requiresOtp) {
+        router.push(`/verify-otp?email=${encodeURIComponent(result.email || email)}&type=login_otp`);
+        return;
+      }
       
       const state = useStore.getState();
       if (state.currentUser?.role !== 'superadmin') {
@@ -124,6 +128,7 @@ export default function SuperAdminPage() {
       setLoggingIn(false);
     }
   };
+
 
   const toggleCompanyStatus = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';

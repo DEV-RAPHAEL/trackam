@@ -88,20 +88,26 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await login(email, password, subdomain);
+    const result = await login(email, password, subdomain);
     setIsLoading(false);
-    router.push('/dashboard');
+    if (result && result.requiresOtp) {
+      router.push(`/verify-otp?email=${encodeURIComponent(result.email || email)}&type=login_otp`);
+    }
   };
 
   const handleDemoLogin = async (account: typeof DEMO_ACCOUNTS[0]) => {
     setDemoLoading(account.role);
     try {
-      // Seed demo data if not already done (idempotent)
       setIsSeeding(true);
       await fetch('/api/demo-seed', { method: 'POST' });
       setIsSeeding(false);
-      await login(account.email, account.password, subdomain);
-      router.push('/dashboard');
+      // Demo login goes through same flow — if OTP required, redirect
+      const result = await login(account.email, account.password, subdomain);
+      if (result && result.requiresOtp) {
+        router.push(`/verify-otp?email=${encodeURIComponent(result.email || account.email)}&type=login_otp`);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -344,9 +350,9 @@ export default function Login() {
                 <label htmlFor="password" className="block text-sm font-bold leading-6 text-slate-800">
                   Password
                 </label>
-                <a href="#" className="text-sm font-bold text-indigo-600 hover:text-indigo-500 transition-colors">
+                <Link href="/forgot-password" className="text-sm font-bold text-indigo-600 hover:text-indigo-500 transition-colors">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <div className="mt-2">
                 <input
@@ -386,13 +392,13 @@ export default function Login() {
         {/* ── Powered by Footer (Only for Tenants) ────────────────── */}
         {tenant && (
           <div className="mt-8 text-center">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-1.5">
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-1.5">
               Powered by 
               <span className="text-slate-600 flex items-center gap-1">
-                <div className="w-3 h-3 bg-slate-400 rounded-sm flex items-center justify-center text-white text-[8px]">T</div>
+                <span className="w-3 h-3 bg-slate-400 rounded-sm flex items-center justify-center text-white text-[8px]">T</span>
                 Trackam
               </span>
-            </p>
+            </div>
           </div>
         )}
       </div>

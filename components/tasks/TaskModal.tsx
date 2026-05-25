@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function TaskModal({ task, onClose }: Props) {
-  const { addTask, updateTask, currentCompany, clients, currentUser } = useStore();
+  const { addTask, updateTask, currentCompany, clients, currentUser, team } = useStore();
   const isEdit = !!task;
 
   const today = new Date().toISOString().split('T')[0];
@@ -40,6 +40,7 @@ export function TaskModal({ task, onClose }: Props) {
     due_date:    task?.due_date    ? task.due_date.split('T')[0]   : defaultDue,
     progress:    task?.progress    ?? 0,
     client_id:   task?.client_id   ?? '',
+    assigned_to: task?.assigned_to ?? currentUser?.id ?? '',
   });
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
@@ -48,7 +49,7 @@ export function TaskModal({ task, onClose }: Props) {
     e.preventDefault();
     const payload = {
       company_id:  currentCompany?.id ?? '',
-      assigned_to: currentUser?.id ?? '',
+      assigned_to: form.assigned_to,
       title:       form.title,
       description: form.description,
       status:      form.status,
@@ -103,6 +104,21 @@ export function TaskModal({ task, onClose }: Props) {
               placeholder="What needs to be done?"
               className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
+          </div>
+
+          {/* Assign To */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Assign To</label>
+            <select
+              value={form.assigned_to}
+              onChange={e => set('assigned_to', e.target.value)}
+              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+            >
+              <option value="">-- Unassigned --</option>
+              {(team || []).map(u => (
+                <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+              ))}
+            </select>
           </div>
 
           {/* Client (Optional) */}

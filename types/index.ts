@@ -6,6 +6,7 @@ export type User = {
   name: string;
   email: string;
   role: Role;
+  email_verified?: number;
 };
 
 export type OnboardingStep = 'payment' | 'company_details' | 'team' | 'first_records' | 'done';

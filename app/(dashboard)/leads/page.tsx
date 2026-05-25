@@ -151,7 +151,20 @@ export default function LeadsPage() {
                         getStageColor(lead.stage)
                       )}
                       value={lead.stage}
-                      onChange={(e) => updateLead(lead.id, { stage: e.target.value as LeadStage })}
+                      onChange={(e) => {
+                        const newStage = e.target.value as LeadStage;
+                        const updates: any = { stage: newStage };
+                        if (newStage === 'Contacted') {
+                          const todayStr = new Date().toISOString().split('T')[0];
+                          if (!lead.last_contact_date) {
+                            updates.last_contact_date = todayStr;
+                          }
+                          if (!lead.next_followup_date) {
+                            updates.next_followup_date = todayStr;
+                          }
+                        }
+                        updateLead(lead.id, updates);
+                      }}
                     >
                       {stages.map((s) => (
                         <option key={s} value={s} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">{s}</option>

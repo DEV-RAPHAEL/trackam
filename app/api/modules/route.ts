@@ -9,8 +9,8 @@ export async function GET(req: Request) {
   try {
     await initDb();
     
-    // Fixed table name from 'modules' to 'system_modules' as defined in lib/db.ts
-    const result = await db.query('SELECT * FROM system_modules ORDER BY id ASC');
+    // Query modules table as defined in lib/db.ts
+    const result = await db.query('SELECT * FROM modules ORDER BY id ASC');
     return NextResponse.json(result.rows);
   } catch (e: any) {
     console.error('API Error [modules]:', e);

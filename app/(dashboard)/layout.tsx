@@ -6,6 +6,7 @@ import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { useStore } from '@/lib/store';
 import { Zap, Menu, X, Loader2, Sun, Moon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { QuickGuide } from '@/components/QuickGuide';
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const currentCompany = useStore(state => state.currentCompany);
+  const currentUser = useStore(state => state.currentUser);
   const isAuthenticated = useStore(state => state.isAuthenticated);
   const loginWithToken = useStore(state => state.loginWithToken);
   const logout = useStore(state => state.logout);
@@ -105,6 +107,9 @@ export default function DashboardLayout({
   return (
     <div className={`flex h-screen overflow-hidden font-sans transition-colors duration-500 ${theme === 'dark' ? 'dark bg-[#09090f] text-white' : 'bg-slate-50 text-slate-900'}`}>
       
+      {/* Global Guided Walkthrough */}
+      <QuickGuide />
+      
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-[220px] md:flex-col md:fixed md:inset-y-0 z-10">
         <Sidebar />
@@ -135,6 +140,20 @@ export default function DashboardLayout({
             <span className="truncate">14-day free trial. {trialDaysLeft} days remaining.</span>
             <button className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors text-xs border border-white/30 shrink-0">
               Upgrade
+            </button>
+          </div>
+        )}
+        {currentUser && !currentUser.email_verified && (
+          <div className="bg-amber-500 text-white px-4 py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm font-semibold shadow-md z-20 border-b border-amber-600/20">
+            <div className="flex items-center gap-2">
+              <span className="shrink-0 text-base">⚠️</span>
+              <span className="truncate">Your email address is unverified. Please verify your email to unlock all features (like sending invoices).</span>
+            </div>
+            <button
+              onClick={() => router.push(`/verify-otp?email=${encodeURIComponent(currentUser.email)}&type=email_verify`)}
+              className="bg-white text-amber-800 hover:bg-slate-50 font-bold px-3 py-1 rounded-lg transition-colors text-xs shrink-0 shadow-sm whitespace-nowrap"
+            >
+              Verify Email Now
             </button>
           </div>
         )}

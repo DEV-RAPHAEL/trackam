@@ -12,7 +12,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     await initDb();
     
     const invResult = await db.query(`
-      SELECT i.*, c.name as client_name, c.email as client_email, comp.name as company_name 
+      SELECT i.*, c.name as client_name, c.email as client_email, 
+             comp.name as company_name, comp.bank_name, comp.account_name, comp.account_number 
       FROM invoices i 
       JOIN clients c ON i.client_id = c.id 
       JOIN companies comp ON i.company_id = comp.id 
@@ -45,6 +46,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             <h1 style="margin: 5px 0; color: #0f172a;">₦${Number(inv.amount).toLocaleString()}</h1>
             <p style="margin: 0; color: #64748b; font-size: 14px;">Due Date: ${new Date(inv.due_date).toLocaleDateString()}</p>
           </div>
+          ${inv.bank_name || inv.account_name || inv.account_number ? `
+          <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+            <p style="margin: 0 0 10px 0; color: #475569; font-weight: bold; font-size: 14px;">Bank Payment Details</p>
+            ${inv.bank_name ? `<p style="margin: 3px 0; font-size: 13px; color: #334155;"><strong>Bank:</strong> ${inv.bank_name}</p>` : ''}
+            ${inv.account_name ? `<p style="margin: 3px 0; font-size: 13px; color: #334155;"><strong>Account Name:</strong> ${inv.account_name}</p>` : ''}
+            ${inv.account_number ? `<p style="margin: 3px 0; font-size: 13px; color: #334155;"><strong>Account Number:</strong> ${inv.account_number}</p>` : ''}
+          </div>
+          ` : ''}
           <div style="margin: 30px 0;">
              <p style="color: #64748b;">You can also view and pay your invoice online using the link below:</p>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/pay/${inv.id}" style="background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View & Pay Invoice Online</a>

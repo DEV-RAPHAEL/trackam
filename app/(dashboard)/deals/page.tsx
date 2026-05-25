@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { Plus, Trash2, X, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, X, TrendingUp, Edit3 } from 'lucide-react';
 import { DealStage } from '@/types';
 import { useRouter } from 'next/navigation';
 
@@ -28,6 +28,7 @@ export default function DealsPage() {
     value: 0,
     stage: 'Prospect' as DealStage
   });
+  const [editingDeal, setEditingDeal] = useState<any | null>(null);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,11 +154,16 @@ export default function DealsPage() {
                       >
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="font-medium text-slate-900 dark:text-white line-clamp-1 pr-2" title={deal.title}>{deal.title}</h4>
-                          {currentUser?.role !== 'user' && (
-                            <button onClick={() => deleteDeal(deal.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none">
-                              <Trash2 className="w-4 h-4" />
+                          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={(e) => { e.stopPropagation(); setEditingDeal(deal); }} className="text-slate-350 dark:text-slate-650 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors focus:outline-none">
+                              <Edit3 className="w-4 h-4" />
                             </button>
-                          )}
+                            {currentUser?.role !== 'user' && (
+                              <button onClick={(e) => { e.stopPropagation(); deleteDeal(deal.id); }} className="text-slate-350 dark:text-slate-650 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">{client?.name || 'Unknown Client'}</p>
                         {deal.lead_id && (
@@ -243,6 +249,80 @@ export default function DealsPage() {
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={closeModal} className="flex-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">Cancel</button>
                 <button type="submit" className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-sm">Create Deal</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {editingDeal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(9, 9, 15, 0.7)', backdropFilter: 'blur(4px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setEditingDeal(null); }}
+        >
+          <div className="relative w-full max-w-md bg-white dark:bg-[#0d0d1a] border border-slate-200 dark:border-white/5 rounded-2xl shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
+                  <Edit3 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-white">Edit Deal</h2>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Modify deal details</p>
+                </div>
+              </div>
+              <button onClick={() => setEditingDeal(null)} className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              updateDeal(editingDeal.id, {
+                title: editingDeal.title,
+                client_id: editingDeal.client_id,
+                lead_id: editingDeal.lead_id || undefined,
+                value: Number(editingDeal.value) || 0,
+                stage: editingDeal.stage
+              });
+              setEditingDeal(null);
+            }} className="px-6 py-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Deal Title</label>
+                <input required type="text" autoFocus value={editingDeal.title} onChange={e => setEditingDeal({...editingDeal, title: e.target.value})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Client</label>
+                <select required value={editingDeal.client_id} onChange={e => setEditingDeal({...editingDeal, client_id: e.target.value})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+                  {(clients || []).map(c => (
+                    <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">{c.name} — {c.company}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Source Lead (Optional)</label>
+                <select value={editingDeal.lead_id || ''} onChange={e => setEditingDeal({...editingDeal, lead_id: e.target.value})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+                  <option value="" className="bg-white dark:bg-slate-900 text-slate-950 dark:text-slate-300">Select a lead…</option>
+                  {(leads || []).map(l => (
+                    <option key={l.id} value={l.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">{l.name} — {l.company}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Value</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm font-medium">₦</span>
+                  <input required type="number" min="0" step="1" value={editingDeal.value} onChange={e => setEditingDeal({...editingDeal, value: parseFloat(e.target.value) || 0})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 pl-8 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Stage</label>
+                <select required value={editingDeal.stage} onChange={e => setEditingDeal({...editingDeal, stage: e.target.value as DealStage})} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+                  {stages.map(s => <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">{s.name}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button type="button" onClick={() => setEditingDeal(null)} className="flex-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-sm">Save Changes</button>
               </div>
             </form>
           </div>

@@ -116,10 +116,7 @@ Open [http://localhost:3000](http://localhost:3000) and you'll see the landing p
 
 ### 5. Default Superadmin
 
-A platform superadmin is seeded on first run:
-- **Email:** `superadmin@trackam.ng`
-- **Password:** `admin1234`
-- Access at `/superadmin`
+A platform superadmin is seeded on first run. Access the control panel at `/superadmin`. Credentials are set securely via database seeds or environment variables.
 
 ---
 

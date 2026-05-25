@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Security: Enforce user's company_id
+    // Security: Enforce user's company_id from authenticated session
     body.company_id = user!.company_id;
     
     // Format items as string for SQLite compatibility
@@ -30,11 +30,13 @@ export async function POST(req: Request) {
       body.items = JSON.stringify(body.items);
     }
 
-    
-    // SECURITY PATCH: Prevent Mass Assignment & IDOR payload injection
-    delete body.id;
-    delete body.company_id;
-    delete body.created_at;
+    // Security: Generate fallback values if missing, ensuring they are not deleted
+    if (!body.id) {
+      body.id = crypto.randomUUID();
+    }
+    if (!body.created_at) {
+      body.created_at = new Date().toISOString();
+    }
 
     const keys = Object.keys(body);
     const values = Object.values(body);

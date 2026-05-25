@@ -24,6 +24,7 @@ export default function Onboarding() {
   const fetchInitialData = useStore(state => state.fetchInitialData);
   const seedSampleData = useStore(state => state.seedSampleData);
   const logActivity = useStore(state => state.logActivity);
+  const addUser = useStore(state => state.addUser);
   
   const [formData, setFormData] = useState({
     name: currentCompany?.name || 'My Workspace',
@@ -35,6 +36,7 @@ export default function Onboarding() {
   // For the first_records step
   const [recordData, setRecordData] = useState({
     clientName: '',
+    clientEmail: '',
     dealTitle: '',
     dealValue: '',
     taskTitle: ''
@@ -83,6 +85,18 @@ export default function Onboarding() {
   
   const handleTeamSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Auto-invite all entered team members during onboarding
+    teamMembers.forEach((member) => {
+      if (member.name.trim() && member.email.trim()) {
+        addUser({
+          name: member.name.trim(),
+          email: member.email.trim(),
+          role: 'user'
+        });
+      }
+    });
+
     updateCompanyOnboarding({ onboarding_step: 'first_records' });
   };
 
@@ -96,11 +110,15 @@ export default function Onboarding() {
     // Better yet: Since store actions fire fetch() without returning promises, we will just add a small delay.
     
     if (recordData.clientName) {
+      if (!recordData.clientEmail.trim()) {
+        return; // UI HTML5 validation will prevent this, but added as safety guard
+      }
       createdClientId = uuidv4();
       addClient({
         company_id: compId,
         name: recordData.clientName,
-        email: '', phone: '', company: '', status: 'active'
+        email: recordData.clientEmail.trim(),
+        phone: '', company: '', status: 'active'
       });
     }
 
@@ -372,17 +390,34 @@ export default function Onboarding() {
               </div>
 
               <form onSubmit={handleRecordsSubmit} className="space-y-6 max-w-lg mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                <div>
-                  <label className="block text-sm font-bold leading-6 text-slate-800">
-                    Add a Client
-                  </label>
-                  <input
-                    type="text"
-                    value={recordData.clientName}
-                    onChange={(e) => setRecordData({...recordData, clientName: e.target.value})}
-                    className="mt-2 block w-full rounded-lg border-slate-200 py-2 pl-3 text-sm border shadow-sm outline-none bg-white"
-                    placeholder="e.g. Acme Corp"
-                  />
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-bold leading-6 text-slate-800">
+                      Add a Client
+                    </label>
+                    <input
+                      type="text"
+                      value={recordData.clientName}
+                      onChange={(e) => setRecordData({...recordData, clientName: e.target.value})}
+                      className="mt-2 block w-full rounded-lg border-slate-200 py-2 pl-3 text-sm border shadow-sm outline-none bg-white"
+                      placeholder="e.g. Acme Corp"
+                    />
+                  </div>
+                  {recordData.clientName.trim() !== '' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        Client Email <span className="text-red-500">* (Mandatory for Invoices)</span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={recordData.clientEmail}
+                        onChange={(e) => setRecordData({...recordData, clientEmail: e.target.value})}
+                        className="block w-full rounded-lg border-slate-200 py-2 pl-3 text-sm border shadow-sm outline-none bg-white"
+                        placeholder="client@acme.com"
+                      />
+                    </div>
+                  )}
                 </div>
                 
                 <div>

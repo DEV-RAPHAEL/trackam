@@ -9,11 +9,12 @@ import { InvoiceViewModal } from '@/components/invoices/InvoiceViewModal';
 import { InvoicePreview } from '@/components/invoices/InvoicePreview';
 
 export default function InvoicesPage() {
-  const { invoices, clients, invoiceTemplates, addInvoice, updateInvoice, deleteInvoice, invoiceDraft, setInvoiceDraft } = useStore();
+  const { invoices, clients, invoiceTemplates, addInvoice, updateInvoice, deleteInvoice, invoiceDraft, setInvoiceDraft, currentUser } = useStore();
   const currentCompany = useStore(state => state.currentCompany);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [viewingInvoiceId, setViewingInvoiceId] = useState<string | null>(null);
+  const [isBankModalOpen, setIsBankModalOpen] = useState(false);
   
   const [newInvoice, setNewInvoice] = useState({
     client_id: '',
@@ -112,6 +113,23 @@ export default function InvoicesPage() {
 
   return (
     <div className="space-y-6">
+      {currentUser?.role === 'owner' && (!currentCompany?.bank_name || !currentCompany?.account_name || !currentCompany?.account_number) && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+            <div>
+              <p className="text-sm font-bold text-amber-800 dark:text-amber-400">Company Payment Details Not Configured</p>
+              <p className="text-xs text-amber-700/80 dark:text-amber-500/80 mt-0.5">Your Naira bank account details have not been set. Clients will not see payment instructions on invoice templates.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsBankModalOpen(true)}
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm shrink-0"
+          >
+            Set Account Details Now
+          </button>
+        </div>
+      )}
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -503,6 +521,72 @@ export default function InvoicesPage() {
           invoiceId={viewingInvoiceId} 
           onClose={() => setViewingInvoiceId(null)} 
         />
+      )}
+
+      {isBankModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(9, 9, 15, 0.7)', backdropFilter: 'blur(4px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsBankModalOpen(false); }}
+        >
+          <div className="relative w-full max-w-md bg-white dark:bg-[#0d0d1a] border border-slate-200 dark:border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-white/5">
+              <div className="flex items-center gap-3">
+                <Settings className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-white">Configure Payment Details</h2>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Set up bank details once and for all</p>
+                </div>
+              </div>
+              <button onClick={() => setIsBankModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formTarget = e.currentTarget;
+              const fd = new FormData(formTarget);
+              const bank_name = fd.get('bank_name') as string;
+              const account_name = fd.get('account_name') as string;
+              const account_number = fd.get('account_number') as string;
+              
+              try {
+                const res = await fetch(`/api/companies/${currentCompany?.id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ bank_name, account_name, account_number })
+                });
+                if (res.ok) {
+                  useStore.getState().updateCompanyBranding({ bank_name, account_name, account_number });
+                  useStore.getState().addToast('Payment details configured successfully ✓', 'success');
+                  setIsBankModalOpen(false);
+                } else {
+                  const data = await res.json();
+                  useStore.getState().addToast(data.error || 'Failed to save details', 'error');
+                }
+              } catch {
+                useStore.getState().addToast('An unexpected error occurred', 'error');
+              }
+            }} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">Bank Name</label>
+                <input required name="bank_name" type="text" defaultValue={currentCompany?.bank_name || ''} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" placeholder="e.g. Zenith Bank" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">Account Name</label>
+                <input required name="account_name" type="text" defaultValue={currentCompany?.account_name || ''} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" placeholder="e.g. Acme Tech Solutions" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">Account Number</label>
+                <input required name="account_number" type="text" defaultValue={currentCompany?.account_number || ''} className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" placeholder="e.g. 1012345678" />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setIsBankModalOpen(false)} className="flex-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-sm">Save Bank Details</button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
