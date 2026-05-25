@@ -144,6 +144,10 @@ export type Invoice = {
   notes?: string;
   is_sent: boolean;
   last_sent_at?: string;
+  type?: string;
+  bank_name?: string;
+  account_name?: string;
+  account_number?: string;
   created_at: string;
 };
 

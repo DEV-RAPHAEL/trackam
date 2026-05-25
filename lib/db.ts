@@ -184,6 +184,11 @@ export async function initDb(): Promise<void> {
         'ALTER TABLE tasks ADD COLUMN assignees TEXT',
         // deals.lead_id — set when a deal originates from a lead
         'ALTER TABLE deals ADD COLUMN lead_id TEXT',
+        // Invoices extra columns for retainers and local bank details
+        'ALTER TABLE invoices ADD COLUMN type TEXT DEFAULT "standard"',
+        'ALTER TABLE invoices ADD COLUMN bank_name TEXT',
+        'ALTER TABLE invoices ADD COLUMN account_name TEXT',
+        'ALTER TABLE invoices ADD COLUMN account_number TEXT',
         // New tables — use CREATE TABLE IF NOT EXISTS so safe to re-run
         `CREATE TABLE IF NOT EXISTS otps (
           id TEXT PRIMARY KEY,

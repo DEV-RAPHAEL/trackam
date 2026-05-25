@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
@@ -23,10 +23,91 @@ const navigation = [
   { name: 'Leads', href: '/leads', icon: Target, roles: ['owner', 'admin', 'user'] },
   { name: 'Deals', href: '/deals', icon: Briefcase, roles: ['owner', 'admin', 'user'] },
   { name: 'Tasks', href: '/tasks', icon: CheckSquare, roles: ['owner', 'admin', 'user'] },
-  { name: 'Invoices', href: '/invoices', icon: Receipt, roles: ['owner', 'admin', 'user'] },
+  { 
+    name: 'Invoices', 
+    href: '/invoices', 
+    icon: Receipt, 
+    roles: ['owner', 'admin', 'user'],
+    subItems: [
+      { name: 'Retainer', href: '/invoices?type=retainer', key: 'retainer' }
+    ]
+  },
   { name: 'Modules', href: '/modules', icon: Blocks, roles: ['owner', 'admin'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['owner', 'admin'] },
 ];
+
+type NavigationLinksProps = {
+  pathname: string;
+  theme: string;
+  currentUser: any;
+};
+
+function NavigationLinks({ pathname, theme, currentUser }: NavigationLinksProps) {
+  const searchParams = useSearchParams();
+  const activeType = searchParams.get('type') || 'all';
+
+  return (
+    <>
+      {navigation.filter(item => !currentUser || item.roles.includes(currentUser.role)).map((item) => {
+        // If the item is Invoices, it is active if pathname === '/invoices' AND type is not retainer
+        const isItemActive = item.href === '/invoices' 
+          ? (pathname === '/invoices' && activeType !== 'retainer')
+          : (pathname === item.href);
+          
+        return (
+          <div key={item.name} className="space-y-1">
+            <Link
+              href={item.href}
+              style={isItemActive ? { 
+                backgroundColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.13)' : 'rgba(16, 185, 129, 0.1)',
+                borderColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.27)' : 'rgba(16, 185, 129, 0.2)',
+                color: theme === 'dark' ? '#34d399' : '#059669'
+              } : {}}
+              className={cn(
+                'group flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 border border-transparent',
+                !isItemActive && (theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
+              )}
+            >
+              <item.icon
+                className="h-4 w-4 shrink-0 transition-colors"
+                style={isItemActive ? { color: theme === 'dark' ? '#34d399' : '#059669' } : {}}
+                aria-hidden="true"
+              />
+              {item.name}
+            </Link>
+            
+            {/* Render sub items if present */}
+            {item.subItems && (
+              <div className="pl-6 space-y-1 mt-1">
+                {item.subItems.map((subItem) => {
+                  const isSubActive = pathname === '/invoices' && activeType === subItem.key;
+                  return (
+                    <Link
+                      key={subItem.name}
+                      href={subItem.href}
+                      style={isSubActive ? {
+                        backgroundColor: theme === 'dark' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.1)',
+                        borderColor: theme === 'dark' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.2)',
+                        color: theme === 'dark' ? '#818cf8' : '#4f46e5'
+                      } : {}}
+                      className={cn(
+                        'group flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 border border-transparent',
+                        !isSubActive && (theme === 'dark' ? 'text-slate-450 hover:text-white hover:bg-slate-800/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50')
+                      )}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0 opacity-60" />
+                      {subItem.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
 
 export function Sidebar() {
   const currentCompany = useStore(state => state.currentCompany);
@@ -45,31 +126,9 @@ export function Sidebar() {
       </div>
       
       <div className="flex-1 px-4 space-y-1 overflow-y-auto mt-2">
-        {navigation.filter(item => !currentUser || item.roles.includes(currentUser.role)).map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              style={isActive ? { 
-                backgroundColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.13)' : 'rgba(16, 185, 129, 0.1)',
-                borderColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.27)' : 'rgba(16, 185, 129, 0.2)',
-                color: theme === 'dark' ? '#34d399' : '#059669'
-              } : {}}
-              className={cn(
-                'group flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 border border-transparent',
-                !isActive && (theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
-              )}
-            >
-              <item.icon
-                className="h-4 w-4 shrink-0 transition-colors"
-                style={isActive ? { color: theme === 'dark' ? '#34d399' : '#059669' } : {}}
-                aria-hidden="true"
-              />
-              {item.name}
-            </Link>
-          );
-        })}
+        <Suspense fallback={<div className="h-20 animate-pulse bg-slate-850 rounded-lg" />}>
+          <NavigationLinks pathname={pathname} theme={theme} currentUser={currentUser} />
+        </Suspense>
       </div>
       
       <div className={`p-4 mt-auto border-t transition-colors duration-500 ${theme === 'dark' ? 'border-white/5' : 'border-slate-200'}`}>

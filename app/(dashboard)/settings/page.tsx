@@ -12,7 +12,7 @@ const PaymentButton = dynamic(
 );
 
 export default function SettingsPage() {
-  const { currentCompany, currentUser, updateCompanyBranding, addToast, modules, unlockModule, team, addUser, deleteUser, resendInvite } = useStore();
+  const { currentCompany, currentUser, updateCompanyBranding, addToast, modules, unlockModule, team, addUser, deleteUser, resendInvite, authFetch } = useStore();
   const [activeTab, setActiveTab] = useState<'branding' | 'team' | 'modules'>('branding');
   
   const [baseDomain, setBaseDomain] = useState('trackam.ng');
@@ -85,9 +85,8 @@ export default function SettingsPage() {
         return;
       }
 
-      const res = await fetch(`/api/companies/${currentCompany?.id}`, {
+      const res = await authFetch(`/api/companies/${currentCompany?.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
       

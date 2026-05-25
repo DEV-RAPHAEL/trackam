@@ -13,7 +13,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     
     const invResult = await db.query(`
       SELECT i.*, c.name as client_name, c.email as client_email, 
-             comp.name as company_name, comp.bank_name, comp.account_name, comp.account_number, comp.brand_color as brand_color
+             comp.name as company_name, comp.bank_name as comp_bank, comp.account_name as comp_acc_name, comp.account_number as comp_acc_num, comp.brand_color as brand_color
       FROM invoices i 
       JOIN clients c ON i.client_id = c.id 
       JOIN companies comp ON i.company_id = comp.id 
@@ -22,6 +22,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     if (invResult.rows.length === 0) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     const inv = invResult.rows[0] as any;
+    
+    // Fallback to company bank details if not overridden in the invoice
+    inv.bank_name = inv.bank_name || inv.comp_bank;
+    inv.account_name = inv.account_name || inv.comp_acc_name;
+    inv.account_number = inv.account_number || inv.comp_acc_num;
 
     // Security check
     if (user?.company_id !== inv.company_id && user?.role !== 'superadmin') {
@@ -54,11 +59,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             ${inv.account_number ? `<p style="margin: 3px 0; font-size: 13px; color: #334155;"><strong>Account Number:</strong> ${inv.account_number}</p>` : ''}
           </div>
           ` : ''}
-          <div style="margin: 30px 0;">
-             <p style="color: #64748b;">You can settle payment online using the secure portal below:</p>
-            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/pay/${inv.id}" style="background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Pay Invoice Online</a>
-          </div>
-          <p style="color: #94a3b8; font-size: 12px;">Thank you for choosing ${inv.company_name}!</p>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 30px;">Thank you for choosing ${inv.company_name}!</p>
         </div>
       `,
       attachments: [{

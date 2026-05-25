@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useStore } from '@/lib/store';
 import { Plus, CheckCircle, Clock, Trash2, X, FileText, AlertCircle, Eye, Settings, Palette, Send, Bell, MailCheck, Loader2 } from 'lucide-react';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { InvoiceStatus, InvoiceItem, InvoiceTemplate } from '@/types';
 import { InvoiceViewModal } from '@/components/invoices/InvoiceViewModal';
 import { InvoicePreview } from '@/components/invoices/InvoicePreview';
+import { useSearchParams } from 'next/navigation';
 
-export default function InvoicesPage() {
-  const { invoices, clients, invoiceTemplates, addInvoice, updateInvoice, deleteInvoice, invoiceDraft, setInvoiceDraft, currentUser } = useStore();
+function InvoicesPageContent() {
+  const { invoices, clients, invoiceTemplates, addInvoice, updateInvoice, deleteInvoice, invoiceDraft, setInvoiceDraft, currentUser, authFetch } = useStore();
   const currentCompany = useStore(state => state.currentCompany);
+  const searchParams = useSearchParams();
+  const activeType = searchParams.get('type') || 'all';
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [viewingInvoiceId, setViewingInvoiceId] = useState<string | null>(null);
@@ -30,6 +34,10 @@ export default function InvoicesPage() {
     send_immediately: false,
     is_recurring: false,
     items: [{ id: crypto.randomUUID(), description: '', quantity: 1, rate: 0, amount: 0 }] as InvoiceItem[],
+    type: 'standard', // 'standard' or 'retainer'
+    bank_name: '',
+    account_name: '',
+    account_number: '',
   });
 
   useEffect(() => {
@@ -42,6 +50,28 @@ export default function InvoicesPage() {
       setInvoiceDraft(null);
     }
   }, [invoiceDraft, setInvoiceDraft]);
+
+  useEffect(() => {
+    if (currentCompany) {
+      setNewInvoice(prev => ({
+        ...prev,
+        bank_name: prev.bank_name || currentCompany.bank_name || '',
+        account_name: prev.account_name || currentCompany.account_name || '',
+        account_number: prev.account_number || currentCompany.account_number || '',
+      }));
+    }
+  }, [currentCompany]);
+
+  // Sync new invoice type with active filter on modal open
+  useEffect(() => {
+    if (isModalOpen) {
+      setNewInvoice(prev => ({
+        ...prev,
+        type: activeType === 'retainer' ? 'retainer' : 'standard',
+        is_recurring: activeType === 'retainer',
+      }));
+    }
+  }, [isModalOpen, activeType]);
 
   const totalAmount = newInvoice.items.reduce((sum, item) => sum + item.amount, 0);
 
@@ -89,6 +119,10 @@ export default function InvoicesPage() {
       notes: newInvoice.notes,
       is_sent: newInvoice.send_immediately,
       last_sent_at: newInvoice.send_immediately ? new Date().toISOString() : undefined,
+      type: newInvoice.type,
+      bank_name: newInvoice.bank_name,
+      account_name: newInvoice.account_name,
+      account_number: newInvoice.account_number,
     });
     
     closeModal();
@@ -103,8 +137,12 @@ export default function InvoicesPage() {
       template_id: (invoiceTemplates || [])[0]?.id || 'tpl-classic',
       notes: '',
       send_immediately: false,
-      is_recurring: false,
+      is_recurring: activeType === 'retainer',
       items: [{ id: crypto.randomUUID(), description: '', quantity: 1, rate: 0, amount: 0 }],
+      type: activeType === 'retainer' ? 'retainer' : 'standard',
+      bank_name: currentCompany?.bank_name || '',
+      account_name: currentCompany?.account_name || '',
+      account_number: currentCompany?.account_number || '',
     });
   };
 
@@ -136,8 +174,15 @@ export default function InvoicesPage() {
     }
   };
 
-  const totalUnpaid = (invoices || []).filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
-  const totalPaid   = (invoices || []).filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
+  const displayedInvoices = (invoices || []).filter(i => {
+    if (activeType === 'retainer') {
+      return i.type === 'retainer';
+    }
+    return true; // Show all invoices by default
+  });
+
+  const totalUnpaid = displayedInvoices.filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
+  const totalPaid   = displayedInvoices.filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
 
   const selectedClient = (clients || []).find(c => c.id === newInvoice.client_id);
   const selectedTemplate = (invoiceTemplates || []).find(t => t.id === newInvoice.template_id) || (invoiceTemplates || [])[0];
@@ -164,8 +209,12 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Invoices</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Track billing and collect payments.</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">
+            {activeType === 'retainer' ? 'Retainer Invoices' : 'Invoices'}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {activeType === 'retainer' ? 'Track and manage retainer agreements.' : 'Track billing and collect payments.'}
+          </p>
         </div>
         <div className="flex gap-3">
           <button
@@ -217,7 +266,7 @@ export default function InvoicesPage() {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-[#0d0d1a] text-sm divide-y divide-slate-50 dark:divide-white/5">
-              {(invoices || []).map((invoice) => {
+              {displayedInvoices.map((invoice) => {
                 const client = (clients || []).find(c => c.id === invoice.client_id);
                 return (
                   <tr key={invoice.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
@@ -243,15 +292,22 @@ export default function InvoicesPage() {
                     <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">{formatCurrency(invoice.amount)}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
-                        <span className={cn(
-                          "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide w-fit",
-                          invoice.status === 'paid' 
-                            ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
-                            : "bg-orange-50 dark:bg-orange-950/20 text-orange-500"
-                        )}>
-                          {invoice.status === 'paid' ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                          {invoice.status}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide w-fit",
+                            invoice.status === 'paid' 
+                              ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
+                              : "bg-orange-50 dark:bg-orange-950/20 text-orange-500"
+                          )}>
+                            {invoice.status === 'paid' ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                            {invoice.status}
+                          </span>
+                          {invoice.type === 'retainer' && (
+                            <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
+                              Retainer
+                            </span>
+                          )}
+                        </div>
                         {invoice.last_sent_at && (
                           <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">Last sent: {formatDate(invoice.last_sent_at)}</span>
                         )}
@@ -336,7 +392,7 @@ export default function InvoicesPage() {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ backgroundColor: 'rgba(9, 9, 15, 0.7)', backdropFilter: 'blur(4px)' }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
@@ -356,7 +412,7 @@ export default function InvoicesPage() {
                   onClick={() => setShowPreview(!showPreview)}
                   className={cn(
                     "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
-                    showPreview ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
+                    showPreview ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-slate-100 dark:bg-white/5 text-slate-650 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
                   )}
                 >
                   <Eye className="h-3.5 w-3.5" />
@@ -486,6 +542,74 @@ export default function InvoicesPage() {
                     </div>
                   </div>
 
+                  {/* Invoice Type Selection (Retainers Tracking) */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Invoice Type</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setNewInvoice({ ...newInvoice, type: 'standard' })}
+                        className={cn(
+                          "py-2 px-3 text-sm font-semibold rounded-lg border text-center transition-all",
+                          newInvoice.type === 'standard'
+                            ? "bg-emerald-600 border-emerald-600 text-white shadow-sm"
+                            : "border-slate-200 dark:border-white/10 text-slate-650 dark:text-slate-400 bg-white dark:bg-white/5 hover:border-slate-300 dark:hover:border-white/20"
+                        )}
+                      >
+                        Standard Invoice
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNewInvoice({ ...newInvoice, type: 'retainer' })}
+                        className={cn(
+                          "py-2 px-3 text-sm font-semibold rounded-lg border text-center transition-all",
+                          newInvoice.type === 'retainer'
+                            ? "bg-indigo-600 border-indigo-600 text-white shadow-sm"
+                            : "border-slate-200 dark:border-white/10 text-slate-650 dark:text-slate-400 bg-white dark:bg-white/5 hover:border-slate-300 dark:hover:border-white/20"
+                        )}
+                      >
+                        Retainer Invoice
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Direct Bank Transfer Details Section */}
+                  <div className="p-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl space-y-3">
+                    <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Printed Bank Account Details</label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[9px] font-semibold text-slate-450 dark:text-slate-500 uppercase tracking-wider mb-1">Bank Name</label>
+                        <input
+                          type="text"
+                          value={newInvoice.bank_name}
+                          onChange={e => setNewInvoice({ ...newInvoice, bank_name: e.target.value })}
+                          placeholder="e.g. Zenith Bank"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 py-1.5 px-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-semibold text-slate-450 dark:text-slate-500 uppercase tracking-wider mb-1">Account Name</label>
+                        <input
+                          type="text"
+                          value={newInvoice.account_name}
+                          onChange={e => setNewInvoice({ ...newInvoice, account_name: e.target.value })}
+                          placeholder="Acme Ltd"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 py-1.5 px-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-semibold text-slate-450 dark:text-slate-500 uppercase tracking-wider mb-1">Account Number</label>
+                        <input
+                          type="text"
+                          value={newInvoice.account_number}
+                          onChange={e => setNewInvoice({ ...newInvoice, account_number: e.target.value })}
+                          placeholder="1012345678"
+                          className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 py-1.5 px-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Notes (Optional)</label>
                     <textarea
@@ -612,9 +736,8 @@ export default function InvoicesPage() {
               const account_number = fd.get('account_number') as string;
               
               try {
-                const res = await fetch(`/api/companies/${currentCompany?.id}`, {
+                const res = await authFetch(`/api/companies/${currentCompany?.id}`, {
                   method: 'PUT',
-                  headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ bank_name, account_name, account_number })
                 });
                 if (res.ok) {
@@ -650,5 +773,17 @@ export default function InvoicesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function InvoicesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      </div>
+    }>
+      <InvoicesPageContent />
+    </Suspense>
   );
 }
