@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     if (result.userId) {
       userResult = await db.query('SELECT * FROM users WHERE id = $1', [result.userId]);
     } else {
-      userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      userResult = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
     }
 
     if (userResult.rows.length === 0) {

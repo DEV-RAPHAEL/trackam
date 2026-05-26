@@ -36,10 +36,11 @@ export async function createOtp(
   type: OtpType,
   userId?: string,
 ): Promise<{ id: string; code: string }> {
+  const cleanEmail = email.trim().toLowerCase();
   // Invalidate previous OTPs of this type for this email
   await db.query(
-    `UPDATE otps SET used = 1 WHERE email = $1 AND type = $2 AND used = 0`,
-    [email, type],
+    `UPDATE otps SET used = 1 WHERE LOWER(email) = $1 AND type = $2 AND used = 0`,
+    [cleanEmail, type],
   );
 
   const code = generateOtpCode(6);
@@ -50,7 +51,7 @@ export async function createOtp(
   await db.query(
     `INSERT INTO otps (id, user_id, email, code, type, expires_at, used, created_at)
      VALUES ($1, $2, $3, $4, $5, $6, 0, $7)`,
-    [id, userId ?? null, email, code, type, expiresAt, createdAt],
+    [id, userId ?? null, cleanEmail, code, type, expiresAt, createdAt],
   );
 
   return { id, code };
@@ -66,12 +67,13 @@ export async function verifyOtp(
   code: string,
   type: OtpType,
 ): Promise<{ valid: true; userId: string | null } | { valid: false; reason: string }> {
+  const cleanEmail = email.trim().toLowerCase();
   const result = await db.query(
     `SELECT * FROM otps
-     WHERE email = $1 AND code = $2 AND type = $3 AND used = 0
+     WHERE LOWER(email) = $1 AND code = $2 AND type = $3 AND used = 0
      ORDER BY created_at DESC
      LIMIT 1`,
-    [email, code, type],
+    [cleanEmail, code, type],
   );
 
   if (result.rows.length === 0) {

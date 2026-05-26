@@ -155,23 +155,25 @@ function VerifyOtpContent() {
     if (resendCooldown > 0) return;
     setIsResending(true);
     try {
-      const endpoint = type === 'password_reset' ? '/api/auth/forgot-password' : '/api/auth/login';
-      // For login OTP resend, we just inform user to try logging in again
-      if (type === 'login_otp') {
-        setError('');
-        setDigits(Array(OTP_LENGTH).fill(''));
-        router.push('/login');
-        return;
+      if (type === 'password_reset') {
+        await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+      } else {
+        await fetch('/api/auth/resend-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, type }),
+        });
       }
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
       setResendCooldown(RESEND_COOLDOWN_SECONDS);
       setDigits(Array(OTP_LENGTH).fill(''));
       setError('');
       inputRefs.current[0]?.focus();
+    } catch (err) {
+      setError('Failed to resend verification code. Please try again.');
     } finally {
       setIsResending(false);
     }
