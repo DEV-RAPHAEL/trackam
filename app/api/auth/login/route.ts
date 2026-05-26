@@ -50,9 +50,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
       }
 
-      // Superadmin also gets OTP — send async so response is immediate
+      // Superadmin also gets OTP — wait for sending to complete in serverless environments
       const { code } = await createOtp(saUser.email, 'login_otp', saUser.id);
-      sendEmail({
+      await sendEmail({
         to: saUser.email,
         subject: '🔐 Trackam Admin Login Code',
         html: loginOtpEmail({ name: saUser.name, otpCode: code, ipAddress: ip }),
@@ -111,9 +111,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid credentials for this workspace.' }, { status: 401 });
     }
 
-    // ── Send OTP (fire-and-forget) — return response immediately ────────────
+    // ── Send OTP — wait for sending to complete in serverless environments ────────────
     const { code } = await createOtp(user.email, 'login_otp', user.id);
-    sendEmail({
+    await sendEmail({
       to: user.email,
       subject: '🔐 Your Trackam Login Code',
       html: loginOtpEmail({ name: user.name, otpCode: code, ipAddress: ip }),

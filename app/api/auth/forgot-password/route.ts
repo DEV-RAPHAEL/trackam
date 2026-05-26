@@ -49,8 +49,8 @@ export async function POST(req: Request) {
 
     const { code } = await createOtp(email, 'password_reset', user.id);
 
-    // Fire-and-forget — return response immediately
-    sendEmail({
+    // Wait for email delivery to complete in serverless environments
+    await sendEmail({
       to: email,
       subject: '🔑 Reset Your Trackam Password',
       html: passwordResetEmail({ name: user.name, otpCode: code }),

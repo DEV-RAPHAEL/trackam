@@ -78,24 +78,25 @@ export async function POST(req: Request) {
     // ── Issue JWT (still needed for onboarding flow before OTP verify) ───
     const token = jwt.sign({ id: user_id, company_id, role, email }, SECRET, { expiresIn: '24h' });
 
-    // ── Send Welcome + Email Verification OTP (async, don't block response) ─
+    // ── Send Welcome + Email Verification OTP (await in serverless environments) ─
     const frontendUrl = process.env.FRONTEND_URL || 'https://trackam.com.ng';
     const workspaceUrl = `https://${subdomain}.trackam.com.ng`;
 
-    createOtp(email, 'email_verify', user_id)
-      .then(({ code }) =>
-        sendEmail({
-          to: email,
-          subject: '🎉 Welcome to Trackam — Verify Your Email',
-          html: welcomeEmail({
-            name: user_name,
-            companyName: company_name,
-            workspaceUrl,
-            otpCode: code,
-          }),
-        })
-      )
-      .catch((err) => console.error('Welcome email failed:', err));
+    try {
+      const { code } = await createOtp(email, 'email_verify', user_id);
+      await sendEmail({
+        to: email,
+        subject: '🎉 Welcome to Trackam — Verify Your Email',
+        html: welcomeEmail({
+          name: user_name,
+          companyName: company_name,
+          workspaceUrl,
+          otpCode: code,
+        }),
+      });
+    } catch (err) {
+      console.error('Welcome email failed:', err);
+    }
 
     return NextResponse.json({ success: true, token });
   } catch (e: any) {

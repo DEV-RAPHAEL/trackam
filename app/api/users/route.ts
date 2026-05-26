@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     const frontendUrl = process.env.FRONTEND_URL || 'https://trackam.com.ng';
     const inviteUrl = `${frontendUrl}/accept-invite?token=${inviteToken}`;
 
-    sendEmail({
+    await sendEmail({
       to: newUser.email,
       subject: `${requesterName} invited you to join ${companyName} on Trackam`,
       html: inviteEmail({

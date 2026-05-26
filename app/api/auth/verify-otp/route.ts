@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       const frontendUrl = process.env.FRONTEND_URL || 'https://trackam.com.ng';
       const workspaceUrl = `https://${company?.subdomain}.trackam.com.ng`;
 
-      sendEmail({
+      await sendEmail({
         to: user.email,
         subject: '✅ Email Verified — Welcome to Trackam!',
         html: emailVerifiedEmail({
