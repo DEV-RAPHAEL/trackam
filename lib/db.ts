@@ -189,6 +189,7 @@ export async function initDb(): Promise<void> {
         'ALTER TABLE invoices ADD COLUMN bank_name TEXT',
         'ALTER TABLE invoices ADD COLUMN account_name TEXT',
         'ALTER TABLE invoices ADD COLUMN account_number TEXT',
+        'ALTER TABLE invoices ADD COLUMN frequency TEXT',
         // New tables — use CREATE TABLE IF NOT EXISTS so safe to re-run
         `CREATE TABLE IF NOT EXISTS otps (
           id TEXT PRIMARY KEY,

@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const rawBody = await req.json();
     
     // Whitelist valid DB columns
-    const ALLOWED_COLUMNS = ['id', 'company_id', 'client_id', 'amount', 'status', 'due_date', 'items', 'created_at', 'type', 'bank_name', 'account_name', 'account_number'];
+    const ALLOWED_COLUMNS = ['id', 'company_id', 'client_id', 'amount', 'status', 'due_date', 'items', 'created_at', 'type', 'bank_name', 'account_name', 'account_number', 'frequency'];
     const body: Record<string, any> = {};
     
     for (const key of ALLOWED_COLUMNS) {

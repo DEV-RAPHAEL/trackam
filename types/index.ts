@@ -148,6 +148,7 @@ export type Invoice = {
   bank_name?: string;
   account_name?: string;
   account_number?: string;
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   created_at: string;
 };
 

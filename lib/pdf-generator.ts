@@ -92,8 +92,8 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
 
         doc.fillColor(textPrimary).fontSize(10).text(desc, 65, currentY + 8);
         doc.text(String(qty), 330, currentY + 8, { align: 'right', width: 40 });
-        doc.text(`₦${rate.toLocaleString()}`, 390, currentY + 8, { align: 'right', width: 70 });
-        doc.text(`₦${amt.toLocaleString()}`, 480, currentY + 8, { align: 'right', width: 70 });
+        doc.text(`NGN ${rate.toLocaleString()}`, 390, currentY + 8, { align: 'right', width: 70 });
+        doc.text(`NGN ${amt.toLocaleString()}`, 480, currentY + 8, { align: 'right', width: 70 });
         currentY += 25;
       });
 
@@ -104,7 +104,7 @@ export function generateInvoicePdf(invoice: any): Promise<Buffer> {
       const totalBoxY = currentY + 30;
       doc.rect(342, totalBoxY, 220, 45).fill(brandColor);
       doc.fillColor('#ffffff').fontSize(9).font('Helvetica-Bold').text(isLuxury ? 'TOTAL VALUATION' : 'TOTAL AMOUNT DUE', 357, totalBoxY + 10);
-      doc.fontSize(15).font('Helvetica-Bold').text(`₦${Number(invoice.amount).toLocaleString()}`, 357, totalBoxY + 22);
+      doc.fontSize(15).font('Helvetica-Bold').text(`NGN ${Number(invoice.amount).toLocaleString()}`, 357, totalBoxY + 22);
       doc.font('Helvetica');
 
       // Thank you / powered by

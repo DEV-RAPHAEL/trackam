@@ -38,6 +38,7 @@ function InvoicesPageContent() {
     bank_name: '',
     account_name: '',
     account_number: '',
+    frequency: 'monthly' as 'daily' | 'weekly' | 'monthly' | 'yearly',
   });
 
   useEffect(() => {
@@ -123,6 +124,7 @@ function InvoicesPageContent() {
       bank_name: newInvoice.bank_name,
       account_name: newInvoice.account_name,
       account_number: newInvoice.account_number,
+      frequency: newInvoice.type === 'retainer' ? (newInvoice.frequency as any || 'monthly') : undefined,
     });
     
     closeModal();
@@ -143,6 +145,7 @@ function InvoicesPageContent() {
       bank_name: currentCompany?.bank_name || '',
       account_name: currentCompany?.account_name || '',
       account_number: currentCompany?.account_number || '',
+      frequency: 'monthly' as 'daily' | 'weekly' | 'monthly' | 'yearly',
     });
   };
 
@@ -304,7 +307,7 @@ function InvoicesPageContent() {
                           </span>
                           {invoice.type === 'retainer' && (
                             <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
-                              Retainer
+                              Retainer {invoice.frequency ? `• ${invoice.frequency}` : '• monthly'}
                             </span>
                           )}
                         </div>
@@ -634,18 +637,29 @@ function InvoicesPageContent() {
                     </label>
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl mt-3">
-                    <input
-                      type="checkbox"
-                      id="is_recurring"
-                      checked={newInvoice.is_recurring}
-                      onChange={e => setNewInvoice({ ...newInvoice, is_recurring: e.target.checked })}
-                      className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                    />
-                    <label htmlFor="is_recurring" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 cursor-pointer select-none">
-                      Monthly Retainer (Auto-generate every month)
-                    </label>
-                  </div>
+                  {newInvoice.type === 'retainer' && (
+                    <div className="p-4 bg-indigo-50/40 dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-500/20 rounded-xl mt-3 space-y-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                        <label className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">
+                          Retainer Billing Cycle
+                        </label>
+                      </div>
+                      <select
+                        value={newInvoice.frequency || 'monthly'}
+                        onChange={e => setNewInvoice({ ...newInvoice, frequency: e.target.value as any })}
+                        className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 py-2 px-3 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow cursor-pointer font-semibold"
+                      >
+                        <option value="daily">Daily (Auto-generate every day)</option>
+                        <option value="weekly">Weekly (Auto-generate every week)</option>
+                        <option value="monthly">Monthly (Auto-generate every month)</option>
+                        <option value="yearly">Yearly (Auto-generate every year)</option>
+                      </select>
+                      <p className="text-[10px] text-slate-450 dark:text-slate-500 font-semibold">
+                        This retainer will automatically generate and queue a new invoice copy on the chosen recurring schedule.
+                      </p>
+                    </div>
+                  )}
 
                 </form>
               </div>
