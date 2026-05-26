@@ -74,19 +74,19 @@ export function TaskModal({ task, onClose }: Props) {
       style={{ backgroundColor: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(4px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-white dark:bg-[#0d0d1a] border dark:border-white/5 rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-50 rounded-lg">
-              <ClipboardList className="h-5 w-5 text-emerald-600" />
+            <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
+              <ClipboardList className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-slate-900">{isEdit ? 'Edit Task' : 'New Task'}</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Fill in the task details</p>
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white">{isEdit ? 'Edit Task' : 'New Task'}</h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Fill in the task details</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+          <button onClick={onClose} className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -95,79 +95,79 @@ export function TaskModal({ task, onClose }: Props) {
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Title <span className="text-red-400">*</span></label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Title <span className="text-red-400">*</span></label>
             <input
               required autoFocus
               type="text"
               value={form.title}
               onChange={e => set('title', e.target.value)}
               placeholder="What needs to be done?"
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition placeholder-slate-400 dark:placeholder-slate-600"
             />
           </div>
 
           {/* Assign To */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Assign To</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Assign To</label>
             <select
               value={form.assigned_to}
               onChange={e => set('assigned_to', e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
             >
-              <option value="">-- Unassigned --</option>
+              <option value="" className="dark:bg-slate-900 text-slate-900 dark:text-white">-- Unassigned --</option>
               {(team || []).map(u => (
-                <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                <option key={u.id} value={u.id} className="dark:bg-slate-900 text-slate-900 dark:text-white">{u.name} ({u.role})</option>
               ))}
             </select>
           </div>
 
           {/* Client (Optional) */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Related Client</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Related Client</label>
             <select
               value={form.client_id}
               onChange={e => set('client_id', e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
             >
-              <option value="">-- None --</option>
+              <option value="" className="dark:bg-slate-900 text-slate-900 dark:text-white">-- None --</option>
               {(clients || []).map(c => (
-                <option key={c.id} value={c.id}>{c.name} ({c.company})</option>
+                <option key={c.id} value={c.id} className="dark:bg-slate-900 text-slate-900 dark:text-white">{c.name} ({c.company})</option>
               ))}
             </select>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Description</label>
             <textarea
               rows={3}
               value={form.description}
               onChange={e => set('description', e.target.value)}
               placeholder="Add more context..."
-              className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition resize-none"
+              className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition resize-none placeholder-slate-400 dark:placeholder-slate-600"
             />
           </div>
 
           {/* Status + Priority */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Status</label>
               <select
                 value={form.status}
                 onChange={e => set('status', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
               >
-                {STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                {STATUSES.map(s => <option key={s.id} value={s.id} className="dark:bg-slate-900 text-slate-900 dark:text-white">{s.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Priority</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Priority</label>
               <select
                 value={form.priority}
                 onChange={e => set('priority', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
               >
-                {PRIORITIES.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
+                {PRIORITIES.map(p => <option key={p.id} value={p.id} className="dark:bg-slate-900 text-slate-900 dark:text-white">{p.label}</option>)}
               </select>
             </div>
           </div>
@@ -175,22 +175,22 @@ export function TaskModal({ task, onClose }: Props) {
           {/* Dates */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Start Date</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Start Date</label>
               <input
                 type="date"
                 value={form.start_date}
                 onChange={e => set('start_date', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Due Date <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-400 mb-1.5">Due Date <span className="text-red-400">*</span></label>
               <input
                 required
                 type="date"
                 value={form.due_date}
                 onChange={e => set('due_date', e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                className="block w-full rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 py-2.5 px-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition cursor-pointer"
               />
             </div>
           </div>
@@ -198,20 +198,20 @@ export function TaskModal({ task, onClose }: Props) {
           {/* Progress */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-medium text-slate-700">Progress</label>
-              <span className="text-sm font-semibold text-emerald-600">{form.progress}%</span>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-400">Progress</label>
+              <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{form.progress}%</span>
             </div>
             <input
               type="range" min={0} max={100} step={5}
               value={form.progress}
               onChange={e => set('progress', Number(e.target.value))}
-              className="w-full accent-emerald-600"
+              className="w-full accent-emerald-600 cursor-pointer"
             />
           </div>
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
               Cancel
             </button>
             <button type="submit" className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow-sm">
