@@ -36,7 +36,21 @@ function AcceptInviteContent() {
     setLoading(true);
     const success = await acceptInvite(token, password);
     if (success) {
-      router.push('/dashboard');
+      const company = useStore.getState().currentCompany;
+      const user = useStore.getState().currentUser;
+      if (company?.subdomain) {
+        // Clear main domain auth state since they will log in under the subdomain
+        useStore.getState().logout();
+
+        const baseDomain = window.location.hostname.includes('localhost')
+          ? 'localhost:3000'
+          : 'trackam.com.ng';
+        const protocol = window.location.protocol;
+        // Redirect directly to the custom white-labeled workspace login and pre-fill their email
+        window.location.href = `${protocol}//${company.subdomain}.${baseDomain}/login?email=${encodeURIComponent(user?.email || '')}`;
+      } else {
+        router.push('/login');
+      }
     } else {
       alert("Failed to set password. Link may have expired.");
       setLoading(false);
