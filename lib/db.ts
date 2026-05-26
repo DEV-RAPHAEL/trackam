@@ -185,7 +185,7 @@ export async function initDb(): Promise<void> {
         // deals.lead_id — set when a deal originates from a lead
         'ALTER TABLE deals ADD COLUMN lead_id TEXT',
         // Invoices extra columns for retainers and local bank details
-        'ALTER TABLE invoices ADD COLUMN type TEXT DEFAULT "standard"',
+        "ALTER TABLE invoices ADD COLUMN type TEXT DEFAULT 'standard'",
         'ALTER TABLE invoices ADD COLUMN bank_name TEXT',
         'ALTER TABLE invoices ADD COLUMN account_name TEXT',
         'ALTER TABLE invoices ADD COLUMN account_number TEXT',

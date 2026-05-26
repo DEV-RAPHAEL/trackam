@@ -21,6 +21,12 @@ export async function POST(req: Request) {
     delete body.company_id;
     delete body.created_at;
 
+    // Securely inject required database columns from user session
+    body.id = 'log-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    body.company_id = user.company_id;
+    body.user_id = user.id; // Enforce user ID from authenticated JWT
+    body.created_at = new Date().toISOString();
+
     const keys = Object.keys(body);
     const values = Object.values(body);
     const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
