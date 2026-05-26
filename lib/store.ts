@@ -86,6 +86,7 @@ interface AppState {
   authFetch: (url: string, options?: RequestInit) => Promise<Response>;
   verifyInvite: (token: string) => Promise<boolean>;
   acceptInvite: (token: string, password: string) => Promise<boolean>;
+  pollActivityLogs: () => Promise<void>;
 }
 
 const initialTemplates: InvoiceTemplate[] = [
@@ -707,6 +708,22 @@ export const useStore = create<AppState>()(
             team: Array.isArray(team) ? team : get().team,
           });
         } catch (e) { console.error(e); }
+      },
+
+      pollActivityLogs: async () => {
+        const company = get().currentCompany;
+        if (!company) return;
+        try {
+          const res = await get().authFetch(`${API_URL}/api/activity-logs/company/${company.id}`);
+          if (res.ok) {
+            const logs = await res.json();
+            if (Array.isArray(logs)) {
+              set({ activityLogs: logs });
+            }
+          }
+        } catch (e) {
+          console.error('Error polling activity logs:', e);
+        }
       },
     }),
     {

@@ -123,7 +123,8 @@ export async function initDb(): Promise<void> {
           id TEXT PRIMARY KEY, company_id TEXT NOT NULL, client_id TEXT NOT NULL,
           amount REAL NOT NULL, status TEXT NOT NULL, due_date TEXT NOT NULL,
           items TEXT NOT NULL, created_at TEXT NOT NULL, notes TEXT,
-          template_id TEXT, is_sent INTEGER DEFAULT 0, last_sent_at TEXT
+          template_id TEXT, is_sent INTEGER DEFAULT 0, last_sent_at TEXT,
+          created_by TEXT
         )`,
         `CREATE TABLE IF NOT EXISTS activity_logs (
           id TEXT PRIMARY KEY, company_id TEXT NOT NULL, user_id TEXT NOT NULL,
@@ -190,6 +191,7 @@ export async function initDb(): Promise<void> {
         'ALTER TABLE invoices ADD COLUMN account_name TEXT',
         'ALTER TABLE invoices ADD COLUMN account_number TEXT',
         'ALTER TABLE invoices ADD COLUMN frequency TEXT',
+        'ALTER TABLE invoices ADD COLUMN created_by TEXT',
         // New tables — use CREATE TABLE IF NOT EXISTS so safe to re-run
         `CREATE TABLE IF NOT EXISTS otps (
           id TEXT PRIMARY KEY,

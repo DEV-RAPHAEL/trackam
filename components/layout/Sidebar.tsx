@@ -12,7 +12,8 @@ import {
   Receipt, 
   Blocks, 
   Settings,
-  LogOut 
+  LogOut,
+  BarChart3 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -32,6 +33,7 @@ const navigation = [
       { name: 'Retainer', href: '/invoices?type=retainer', key: 'retainer' }
     ]
   },
+  { name: 'Reports', href: '/reports', icon: BarChart3, roles: ['owner', 'admin', 'user'] },
   { name: 'Modules', href: '/modules', icon: Blocks, roles: ['owner', 'admin'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['owner', 'admin'] },
 ];

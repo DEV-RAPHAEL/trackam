@@ -3,7 +3,7 @@
 import React, { use } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, getInvoiceEffectiveStatus } from '@/lib/utils';
 import { ArrowLeft, Mail, Phone, Building, Briefcase, FileText, TrendingUp, CheckSquare, Clock, Edit3, X } from 'lucide-react';
 
 export default function ClientProfilePage() {
@@ -54,8 +54,8 @@ export default function ClientProfilePage() {
   const activeDeals = clientDeals.filter(d => d.stage !== 'Won' && d.stage !== 'Lost');
   
   const clientInvoices = (invoices || []).filter(i => i.client_id === id);
-  const ltv = clientInvoices.filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
-  const unpaid = clientInvoices.filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
+  const ltv = clientInvoices.filter(i => getInvoiceEffectiveStatus(i) === 'paid').reduce((s, i) => s + i.amount, 0);
+  const unpaid = clientInvoices.filter(i => getInvoiceEffectiveStatus(i) === 'unpaid').reduce((s, i) => s + i.amount, 0);
 
   // Filter tasks using the precise client_id, and fallback to title matching for legacy tasks
   const clientTasks = (tasks || []).filter(t => 
@@ -186,17 +186,20 @@ export default function ClientProfilePage() {
                     </tr>
                   </thead>
                   <tbody className="text-sm text-slate-900 dark:text-slate-200">
-                    {[...(clientInvoices || [])].sort((a,b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()).map((inv) => (
-                      <tr key={inv.id} className="border-b border-slate-50 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/5">
-                        <td className="px-5 py-3">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${inv.status === 'paid' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400'}`}>
-                            {inv.status.toUpperCase()}
-                          </span>
-                        </td>
-                        <td className="px-5 py-3 text-right font-bold text-slate-700 dark:text-slate-300">{formatCurrency(inv.amount)}</td>
-                        <td className="px-5 py-3 text-right text-slate-500 dark:text-slate-400">{formatDate(inv.due_date)}</td>
-                      </tr>
-                    ))}
+                    {[...(clientInvoices || [])].sort((a,b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()).map((inv) => {
+                      const effStatus = getInvoiceEffectiveStatus(inv);
+                      return (
+                        <tr key={inv.id} className="border-b border-slate-50 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/5">
+                          <td className="px-5 py-3">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${effStatus === 'paid' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400'}`}>
+                              {effStatus.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 text-right font-bold text-slate-700 dark:text-slate-300">{formatCurrency(inv.amount)}</td>
+                          <td className="px-5 py-3 text-right text-slate-500 dark:text-slate-400">{formatDate(inv.due_date)}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               ) : (

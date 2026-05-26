@@ -15,8 +15,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ companyI
   try {
     await initDb();
     
-    // Simplified query to only handle invoices as per the route's purpose
-    const result = await db.query('SELECT * FROM invoices WHERE company_id = $1 ORDER BY created_at DESC', [companyId]);
+    let result;
+    if (user?.role === 'user') {
+      result = await db.query(
+        'SELECT * FROM invoices WHERE company_id = $1 AND created_by = $2 ORDER BY created_at DESC',
+        [companyId, user.id]
+      );
+    } else {
+      result = await db.query(
+        'SELECT * FROM invoices WHERE company_id = $1 ORDER BY created_at DESC',
+        [companyId]
+      );
+    }
     return NextResponse.json(result.rows);
   } catch (e: any) {
     console.error(`API Error [invoices/company/${companyId}]:`, e);

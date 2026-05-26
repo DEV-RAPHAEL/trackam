@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const rawBody = await req.json();
     
     // Whitelist valid DB columns
-    const ALLOWED_COLUMNS = ['id', 'company_id', 'client_id', 'amount', 'status', 'due_date', 'items', 'created_at', 'type', 'bank_name', 'account_name', 'account_number', 'frequency'];
+    const ALLOWED_COLUMNS = ['id', 'company_id', 'client_id', 'amount', 'status', 'due_date', 'items', 'created_at', 'type', 'bank_name', 'account_name', 'account_number', 'frequency', 'created_by'];
     const body: Record<string, any> = {};
     
     for (const key of ALLOWED_COLUMNS) {
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
 
     // Security: Enforce user's company_id from authenticated session
     body.company_id = user!.company_id;
+    body.created_by = user!.id;
     
     // Format items as string for SQLite compatibility
     if (body.items && typeof body.items !== 'string') {

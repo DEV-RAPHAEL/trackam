@@ -19,11 +19,26 @@ export async function GET(req: Request, { params }: { params: Promise<{ companyI
       db.query('SELECT COUNT(*) FROM leads WHERE company_id = $1', [companyId]),
       db.query('SELECT COUNT(*) FROM deals WHERE company_id = $1', [companyId]),
       db.query('SELECT COUNT(*) FROM tasks WHERE company_id = $1', [companyId]),
-      db.query('SELECT * FROM invoices WHERE company_id = $1', [companyId])
+      user?.role === 'user'
+        ? db.query('SELECT * FROM invoices WHERE company_id = $1 AND created_by = $2', [companyId, user.id])
+        : db.query('SELECT * FROM invoices WHERE company_id = $1', [companyId])
     ]);
 
-    const totalRevenue = invoices.rows.filter((i: any) => i.status === 'paid').reduce((s: number, i: any) => s + (Number(i.amount) || 0), 0);
-    const pendingRevenue = invoices.rows.filter((i: any) => i.status === 'unpaid').reduce((s: number, i: any) => s + (Number(i.amount) || 0), 0);
+    const getEffectiveStatus = (i: any) => {
+      if (i.type === 'retainer' && i.status === 'unpaid' && i.due_date) {
+        const now = new Date();
+        const dueDate = new Date(i.due_date);
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const dueMonthStart = new Date(dueDate.getFullYear(), dueDate.getMonth(), 1);
+        if (dueMonthStart > currentMonthStart) {
+          return 'paid';
+        }
+      }
+      return i.status;
+    };
+
+    const totalRevenue = invoices.rows.filter((i: any) => getEffectiveStatus(i) === 'paid').reduce((s: number, i: any) => s + (Number(i.amount) || 0), 0);
+    const pendingRevenue = invoices.rows.filter((i: any) => getEffectiveStatus(i) === 'unpaid').reduce((s: number, i: any) => s + (Number(i.amount) || 0), 0);
 
     return NextResponse.json({
       summary: {

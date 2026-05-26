@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useStore } from '@/lib/store';
-import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatDate, formatDateTime, getInvoiceEffectiveStatus } from '@/lib/utils';
 import { Users, Target, Briefcase, CheckSquare, TrendingUp, AlertCircle, RotateCcw, Trophy, Crown, Activity, CreditCard, ShieldCheck, Zap, Settings, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -16,10 +16,10 @@ export default function DashboardPage() {
 
   const activeDeals = (deals || []).filter(d => d.stage !== 'Won' && d.stage !== 'Lost');
   const pendingTasks = (tasks || []).filter(t => t.status === 'todo' || t.status === 'in_progress');
-  const unpaidInvoices = (invoices || []).filter(i => i.status === 'unpaid');
+  const unpaidInvoices = (invoices || []).filter(i => getInvoiceEffectiveStatus(i) === 'unpaid');
   
-  const calculatedRevenue = (invoices || []).filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
-  const calculatedUnpaid = (invoices || []).filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
+  const calculatedRevenue = (invoices || []).filter(i => getInvoiceEffectiveStatus(i) === 'paid').reduce((s, i) => s + i.amount, 0);
+  const calculatedUnpaid = (invoices || []).filter(i => getInvoiceEffectiveStatus(i) === 'unpaid').reduce((s, i) => s + i.amount, 0);
 
   const totalLeadsCount = (leads || []).length;
   const totalDealsCount = (deals || []).length;
@@ -43,7 +43,7 @@ export default function DashboardPage() {
   })).filter(d => d.value > 0);
 
   const historyMap = new Map();
-  (invoices || []).filter(i => i.status === 'paid').forEach(inv => {
+  (invoices || []).filter(i => getInvoiceEffectiveStatus(i) === 'paid').forEach(inv => {
     const month = inv.created_at.substring(0, 7);
     historyMap.set(month, (historyMap.get(month) || 0) + inv.amount);
   });

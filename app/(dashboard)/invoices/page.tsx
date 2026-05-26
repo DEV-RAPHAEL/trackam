@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useStore } from '@/lib/store';
 import { Plus, CheckCircle, Clock, Trash2, X, FileText, AlertCircle, Eye, Settings, Palette, Send, Bell, MailCheck, Loader2 } from 'lucide-react';
-import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { formatCurrency, formatDate, cn, getInvoiceEffectiveStatus } from '@/lib/utils';
 import { InvoiceStatus, InvoiceItem, InvoiceTemplate } from '@/types';
 import { InvoiceViewModal } from '@/components/invoices/InvoiceViewModal';
 import { InvoicePreview } from '@/components/invoices/InvoicePreview';
@@ -184,8 +184,8 @@ function InvoicesPageContent() {
     return true; // Show all invoices by default
   });
 
-  const totalUnpaid = displayedInvoices.filter(i => i.status === 'unpaid').reduce((s, i) => s + i.amount, 0);
-  const totalPaid   = displayedInvoices.filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0);
+  const totalUnpaid = displayedInvoices.filter(i => getInvoiceEffectiveStatus(i) === 'unpaid').reduce((s, i) => s + i.amount, 0);
+  const totalPaid   = displayedInvoices.filter(i => getInvoiceEffectiveStatus(i) === 'paid').reduce((s, i) => s + i.amount, 0);
 
   const selectedClient = (clients || []).find(c => c.id === newInvoice.client_id);
   const selectedTemplate = (invoiceTemplates || []).find(t => t.id === newInvoice.template_id) || (invoiceTemplates || [])[0];
@@ -296,15 +296,20 @@ function InvoicesPageContent() {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide w-fit",
-                            invoice.status === 'paid' 
-                              ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
-                              : "bg-orange-50 dark:bg-orange-950/20 text-orange-500"
-                          )}>
-                            {invoice.status === 'paid' ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                            {invoice.status}
-                          </span>
+                          {(() => {
+                            const effStatus = getInvoiceEffectiveStatus(invoice);
+                            return (
+                              <span className={cn(
+                                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide w-fit",
+                                effStatus === 'paid' 
+                                  ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" 
+                                  : "bg-orange-50 dark:bg-orange-950/20 text-orange-500"
+                              )}>
+                                {effStatus === 'paid' ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                                {effStatus}
+                              </span>
+                            );
+                          })()}
                           {invoice.type === 'retainer' && (
                             <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
                               Retainer {invoice.frequency ? `• ${invoice.frequency}` : '• monthly'}
@@ -340,7 +345,7 @@ function InvoicesPageContent() {
                               <Send className="h-4 w-4" />
                             )}
                           </button>
-                        ) : invoice.status === 'unpaid' && (
+                        ) : getInvoiceEffectiveStatus(invoice) === 'unpaid' && (
                           <button 
                             disabled={sendingFollowUpId === invoice.id}
                             onClick={() => handleSendFollowUp(invoice.id)}
@@ -355,7 +360,7 @@ function InvoicesPageContent() {
                           </button>
                         )}
                         
-                        {invoice.status === 'unpaid' && (
+                        {getInvoiceEffectiveStatus(invoice) === 'unpaid' && (
                           <button 
                             disabled={markingPaidId === invoice.id}
                             onClick={() => handleMarkPaid(invoice.id)} 

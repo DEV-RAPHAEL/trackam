@@ -18,6 +18,13 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: 'Unauthorized: Record mismatch' }, { status: 403 });
     }
 
+    if (user?.role === 'user') {
+      const invCheck = await db.query('SELECT created_by FROM invoices WHERE id = $1', [id]);
+      if (invCheck.rows.length === 0 || (invCheck.rows[0] as any).created_by !== user.id) {
+        return NextResponse.json({ error: 'Unauthorized: Staff can only edit their own invoices' }, { status: 403 });
+      }
+    }
+
     const body = await req.json();
     
     // Format items as string for PGlite compatibility if present
@@ -107,6 +114,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const isOwner = await verifyOwnership(table_name, id, user!.company_id);
     if (!isOwner && user?.role !== 'superadmin') {
       return NextResponse.json({ error: 'Unauthorized: Record mismatch' }, { status: 403 });
+    }
+
+    if (user?.role === 'user') {
+      const invCheck = await db.query('SELECT created_by FROM invoices WHERE id = $1', [id]);
+      if (invCheck.rows.length === 0 || (invCheck.rows[0] as any).created_by !== user.id) {
+        return NextResponse.json({ error: 'Unauthorized: Staff can only delete their own invoices' }, { status: 403 });
+      }
     }
 
     await db.query(`DELETE FROM ${table_name} WHERE id = $1`, [id]);
